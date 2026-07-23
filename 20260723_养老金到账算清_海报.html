@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>我算清了 · 养老金结果卡</title>
+<style>
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f3f4f6; padding: 20px 14px 40px; color: #3f3f46; }
+  .wrap { max-width: 420px; margin: 0 auto; }
+  .controls { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.06); }
+  .controls label { font-size: 13px; color: #52525b; display: block; margin: 8px 0 4px; }
+  .controls input { width: 100%; border: 1.5px solid #fed7aa; border-radius: 10px; padding: 10px; font-size: 15px; box-sizing: border-box; }
+  .controls .tip { font-size: 11px; color: #a1a1aa; margin-top: 10px; line-height: 1.5; }
+  .poster { background: linear-gradient(165deg, #fff7ed 0%, #ffedd5 55%, #fed7aa 100%); border-radius: 22px; padding: 28px 22px 24px; box-shadow: 0 10px 30px rgba(234,88,12,.25); position: relative; overflow: hidden; }
+  .poster::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; background: radial-gradient(circle, rgba(251,146,60,.35), transparent 70%); border-radius: 50%; }
+  .brand { font-size: 12px; letter-spacing: 2px; color: #b45309; font-weight: 700; }
+  .headline { font-size: 46px; font-weight: 900; color: #c2410c; margin: 10px 0 4px; line-height: 1.1; }
+  .sub { font-size: 14px; color: #9a3412; margin-bottom: 18px; }
+  .card { background: #fff; border-radius: 16px; padding: 18px 16px; box-shadow: 0 6px 16px rgba(0,0,0,.08); position: relative; }
+  .card .row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px dashed #fde68a; }
+  .card .row:last-child { border-bottom: none; }
+  .card .k { font-size: 14px; color: #78716c; }
+  .card .v { font-size: 26px; font-weight: 800; color: #ea580c; }
+  .quote { font-size: 15px; color: #7c2d12; margin: 18px 4px 16px; line-height: 1.6; }
+  .foot { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .qr { width: 62px; height: 62px; border: 2px solid #fdba74; border-radius: 10px; display: block; object-fit: cover; flex: 0 0 auto; }
+  .foot .cta { font-size: 13px; color: #9a3412; line-height: 1.5; }
+  .shot { text-align: center; font-size: 12px; color: #a1a1aa; margin-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="controls">
+    <label>每月多拿（元）</label>
+    <input id="m" type="number" placeholder="如 145" />
+    <label>一次性补发（元）</label>
+    <input id="b" type="number" placeholder="如 1015" />
+    <div class="tip">填好下面海报会实时更新，截图发家族群即可。数字来自你用计算器算出的结果（以官方到账数为准）。</div>
+  </div>
+
+  <div class="poster" id="poster">
+    <div class="brand">银发新生代</div>
+    <div class="headline">我算清了</div>
+    <div class="sub">2026 养老金到账 · 自己算的才踏实</div>
+    <div class="card">
+      <div class="row"><span class="k">每月多拿</span><span class="v">¥<span id="vm">0</span></span></div>
+      <div class="row"><span class="k">一次性补发</span><span class="v">¥<span id="vb">0</span></span></div>
+    </div>
+    <div class="quote">「钱到账那天，体面的不是"收到了"，是"我算清了"。」</div>
+    <div class="foot">
+      <img class="qr" src="银发新生代.jpg" alt="银发新生代公众号二维码" />
+      <div class="cta">扫码关注公众号<br>发「算清」用计算器 →</div>
+    </div>
+  </div>
+  <div class="shot">↑ 截图这一块，发家族群 / 朋友圈</div>
+</div>
+<script>
+  function upd() {
+    document.getElementById('vm').textContent = document.getElementById('m').value || 0;
+    document.getElementById('vb').textContent = document.getElementById('b').value || 0;
+  }
+  document.getElementById('m').addEventListener('input', upd);
+  document.getElementById('b').addEventListener('input', upd);
+</script>
+</body>
+</html>

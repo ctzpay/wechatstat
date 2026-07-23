@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>3 步算出你的养老金涨多少</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(180deg, #fff7ed 0%, #fffbeb 100%); color: #3f3f46; padding: 20px 16px 40px; }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 22px; line-height: 1.4; margin: 0 0 4px; color: #b45309; font-weight: 800; }
+  .sub { font-size: 13px; color: #a1a1aa; margin: 0 0 18px; }
+  .card { background: #fff; border-radius: 16px; padding: 18px 16px; box-shadow: 0 6px 20px rgba(245,158,11,.12); margin-bottom: 14px; }
+  .grp-title { font-size: 14px; font-weight: 700; color: #92400e; margin: 0 0 12px; display: flex; align-items: center; gap: 6px; }
+  .grp-title::before { content: ""; width: 6px; height: 16px; background: #f59e0b; border-radius: 3px; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 13px; color: #52525b; margin-bottom: 6px; }
+  .field input { width: 100%; border: 1.5px solid #fed7aa; border-radius: 10px; padding: 11px 12px; font-size: 15px; background: #fffdf7; }
+  .field input:focus { outline: none; border-color: #f59e0b; }
+  .hint { font-size: 11px; color: #d97706; margin-top: 4px; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #52525b; padding: 10px 0; }
+  .check input { width: 18px; height: 18px; accent-color: #f59e0b; }
+  .btn { width: 100%; border: none; border-radius: 12px; padding: 14px; font-size: 16px; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #f59e0b, #ea580c); box-shadow: 0 6px 16px rgba(234,88,12,.3); margin-top: 6px; }
+  .btn:active { transform: translateY(1px); }
+  .result { display: none; text-align: center; margin-top: 6px; }
+  .result.show { display: block; animation: pop .3s ease; }
+  @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .r-month { font-size: 13px; color: #a1a1aa; }
+  .r-num { font-size: 40px; font-weight: 900; color: #ea580c; margin: 2px 0; }
+  .r-back { font-size: 13px; color: #52525b; margin-top: 8px; }
+  .r-back b { color: #b45309; }
+  .share { margin-top: 14px; background: #fff; color: #ea580c; border: 1.5px solid #fdba74; }
+  .note { font-size: 11px; color: #a1a1aa; line-height: 1.6; margin-top: 16px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>别等短信了，3 步算出你的养老金涨多少</h1>
+  <p class="sub">数字填你省人社厅公布的就行 · 这工具只演示算法，不放任何真实政策数</p>
+
+  <div class="card">
+    <p class="grp-title">第 1 块 · 定额调整</p>
+    <div class="field">
+      <label>每人每月定额增加（元）</label>
+      <input id="base" type="number" min="0" inputmode="decimal" placeholder="如 50" />
+      <div class="hint">本省通知第一行"每人每月增加 X 元"</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="grp-title">第 2 块 · 挂钩调整</p>
+    <div class="field">
+      <label>缴费年限单价（元 / 年）</label>
+      <input id="perYear" type="number" min="0" inputmode="decimal" placeholder="如 1" />
+    </div>
+    <div class="field">
+      <label>本人缴费年限（年）</label>
+      <input id="years" type="number" min="0" inputmode="numeric" placeholder="如 35" />
+    </div>
+    <div class="field">
+      <label>按现有养老金挂钩比例（%）</label>
+      <input id="rate" type="number" min="0" inputmode="decimal" placeholder="如 1" />
+    </div>
+    <div class="field">
+      <label>本人现有月养老金（元）</label>
+      <input id="cur" type="number" min="0" inputmode="numeric" placeholder="如 3000" />
+    </div>
+    <div class="hint">注：有的省份缴费年限是分段计价（如前 15 年一个价、超出部分另一个价），这里按单一单价估算，结果供参考。</div>
+  </div>
+
+  <div class="card">
+    <p class="grp-title">第 3 块 · 倾斜调整</p>
+    <div class="field">
+      <label>倾斜增加额（元 / 月）</label>
+      <input id="tilt" type="number" min="0" inputmode="decimal" placeholder="如 30" />
+      <div class="hint">高龄 / 艰苦边远 / 特殊群体，具体以本省方案为准</div>
+    </div>
+    <label class="check"><input id="tiltOn" type="checkbox" /> 我（或家人）满足倾斜条件，计入这笔</label>
+  </div>
+
+  <div class="card">
+    <p class="grp-title">补发月数</p>
+    <div class="field">
+      <label>从 1 月起算，到发放当月共几个月</label>
+      <input id="months" type="number" min="1" inputmode="numeric" value="7" />
+      <div class="hint">多数省份是 7 个月（1 月至 7 月），具体以本省通知为准</div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="calc()">算一算，我每月多拿多少</button>
+
+  <div class="result card" id="result">
+    <p class="r-month">预计每月增加</p>
+    <p class="r-num" id="rMonth">0 元</p>
+    <p class="r-back">一次性补发（按你填的月数，一般 1 月起算）约<br><b id="rBack">0 元</b></p>
+    <button class="btn share" onclick="share()">发家族群 · 我算清了</button>
+  </div>
+
+  <p class="note">这工具只按"定额＋挂钩＋倾斜"三块演示怎么算，不放任何真实政策数字。<br>
+  准数请以人社部及你省人社部门官方发布为准。截图分享前，请拿官方到账数对一下。</p>
+</div>
+
+<script>
+function calc() {
+  var base = +document.getElementById('base').value || 0;
+  var perYear = +document.getElementById('perYear').value || 0;
+  var years = +document.getElementById('years').value || 0;
+  var rate = +document.getElementById('rate').value || 0;
+  var cur = +document.getElementById('cur').value || 0;
+  var tilt = +document.getElementById('tilt').value || 0;
+  var tiltOn = document.getElementById('tiltOn').checked ? tilt : 0;
+  var months = +document.getElementById('months').value || 7;
+
+  // 每月增加 = 定额 + 缴费年限挂钩 + 待遇比例挂钩 + 倾斜
+  var month = base + perYear * years + cur * rate / 100 + tiltOn;
+  month = Math.round(month * 100) / 100;
+  // 一次性补发 = 每月增加 × 补发月数
+  var back = Math.round(month * months * 100) / 100;
+
+  document.getElementById('rMonth').textContent = month + ' 元';
+  document.getElementById('rBack').textContent = back + ' 元';
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+}
+function share() {
+  var txt = '我用"银发新生代"算清了今年养老金：每月多拿 ' +
+            document.getElementById('rMonth').textContent + '，一次性补发约 ' +
+            document.getElementById('rBack').textContent + '。你算了吗？';
+  if (navigator.share) { navigator.share({ title: '养老金到账算清', text: txt }).catch(function(){}); }
+  else { alert('长按下方结果截图，发家族群即可～\n\n' + txt); }
+}
+</script>
+</body>
+</html>
