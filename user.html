@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>V5 私厨上门平台-可交互原型 · 用户端 · 上海</title>
+<script id="auto-designer-preview-contract" type="application/json">
+{
+  "artifactRole": "interactive-prototype",
+  "authoringViewport": { "width": 390, "height": 844 },
+  "deviceAdaptation": { "enabled": true, "strategy": "responsive", "supportedDevices": ["desktop", "tablet", "mobile"] },
+  "defaultDevice": "mobile"
+}
+</script>
+<style>
+  :root {
+    --bg:#F5F1E8; --surface:#FFFFFF; --ink:#1C2620; --muted:#8B8477; --border:#E3DCCB;
+    --accent:#1F3D2B; --accent-deep:#142A1E; --gold:#C9A96A; --gold-ink:#8A6D35;
+    --green:#3E7A5C; --danger:#A63A2E;
+    --font-display:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif;
+    --font-body:"Noto Sans SC","PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+    --font-mono:Consolas,"JetBrains Mono",monospace;
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; padding:0; height:100%; }
+  body {
+    background:radial-gradient(70% 60% at 50% 0%, rgba(31,61,43,0.09), var(--bg) 65%), var(--bg);
+    font-family:var(--font-body); color:var(--ink); font-size:14px; line-height:1.5;
+    display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .stage { width:min(390px,100%); }
+  .stage-caption { font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-align:center; margin-bottom:10px; }
+  .stage-caption b { color:var(--gold-ink); font-weight:600; }
+  .app { position:relative; width:100%; max-width:480px; height:min(844px, calc(100vh - 60px)); min-height:600px; margin:0 auto; background:var(--bg); border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(28,38,32,0.1), 0 30px 70px -18px rgba(28,38,32,0.35); display:flex; flex-direction:column; }
+  @media (max-width:420px) { .app { border-radius:24px; } }
+  .sbar { flex:0 0 40px; display:flex; justify-content:space-between; align-items:flex-end; padding:10px 26px 0; font-size:13px; font-weight:600; }
+  .sbar .sg { display:flex; gap:4px; align-items:flex-end; }
+  .sbar .sg i { width:4px; border-radius:1px; background:var(--ink); display:block; }
+  .sbar .sg i:nth-child(1){height:7px} .sbar .sg i:nth-child(2){height:8px} .sbar .sg i:nth-child(3){height:9px} .sbar .sg i:nth-child(4){height:11px}
+  .screen { display:none; flex:1 1 auto; flex-direction:column; min-height:0; }
+  .screen.on { display:flex; }
+  .abar { flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding:6px 18px 10px; gap:10px; }
+  .abar .t { font-family:var(--font-display); font-size:17px; font-weight:700; letter-spacing:0.02em; }
+  .abar .loc { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:4px; }
+  .iconbtn { background:none; border:none; padding:6px; cursor:pointer; color:var(--ink); display:grid; place-items:center; border-radius:10px; }
+  .iconbtn:hover { background:rgba(28,38,32,0.06); }
+  .iconbtn:active { transform:scale(0.92); }
+  .iconbtn svg { width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; }
+  .iconbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .body { flex:1 1 auto; overflow-y:auto; padding:0 16px 12px; display:flex; flex-direction:column; gap:12px; }
+  .body::-webkit-scrollbar { display:none; }
+  .banner { position:relative; border-radius:18px; height:132px; overflow:hidden; color:#F5F1E8; flex-shrink:0; }
+  .banner .slide { position:absolute; inset:0; padding:20px 22px; display:flex; flex-direction:column; justify-content:center; opacity:0; transform:translateX(14px); transition:opacity .3s ease, transform .3s ease; }
+  .banner .slide.on { opacity:1; transform:none; }
+  .banner .slide b { font-family:var(--font-display); font-size:20px; letter-spacing:0.03em; }
+  .banner .slide span { font-size:12px; opacity:.88; margin-top:6px; }
+  .banner .slide .chip-tag { align-self:flex-start; background:rgba(201,169,106,0.25); border:1px solid rgba(201,169,106,0.55); color:#F0E4C8; border-radius:999px; padding:3px 10px; font-size:10px; margin-bottom:10px; }
+  .banner .dots { position:absolute; right:18px; bottom:14px; display:flex; gap:5px; }
+  .banner .dots button { width:14px; height:5px; border-radius:3px; border:none; background:rgba(245,241,232,0.4); cursor:pointer; padding:0; transition:all .25s; }
+  .banner .dots button.on { width:22px; background:var(--gold); }
+  .banner .dots button:focus-visible { outline:2px solid #fff; }
+  .ent { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:14px 8px; }
+  .ent button { background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px; font:inherit; font-size:11px; color:var(--ink); padding:4px; border-radius:12px; }
+  .ent button:hover { background:rgba(31,61,43,0.06); }
+  .ent button:active { transform:scale(0.94); }
+  .ent button i { width:38px; height:38px; border-radius:12px; display:grid; place-items:center; }
+  .ent button i svg { width:18px; height:18px; stroke:#F5F1E8; fill:none; stroke-width:1.8; }
+  .sec { display:flex; align-items:center; justify-content:space-between; }
+  .sec b { font-family:var(--font-display); font-size:15px; letter-spacing:0.02em; }
+  .sec button { background:none; border:none; font:inherit; font-size:11px; color:var(--muted); cursor:pointer; padding:6px; border-radius:8px; }
+  .sec button:hover { color:var(--gold-ink); }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:13px 15px; display:flex; gap:12px; align-items:center; }
+  .card.col { flex-direction:column; align-items:stretch; padding:0; overflow:hidden; }
+  .card .av { width:44px; height:44px; border-radius:50%; flex-shrink:0; display:grid; place-items:center; color:#F5F1E8; font-family:var(--font-display); font-size:15px; }
+  .card .bd { flex:1; min-width:0; }
+  .card .bd b { display:block; font-size:13.5px; line-height:1.35; }
+  .card .bd span { display:block; font-size:11px; color:var(--muted); margin-top:3px; line-height:1.45; }
+  .card .rt { text-align:right; flex-shrink:0; }
+  .card .rt b { color:var(--accent); font-size:12.5px; }
+  .card .rt span { display:block; font-size:10px; color:var(--muted); margin-top:2px; }
+  .card.col .img { height:84px; display:grid; place-items:center; color:#F5F1E8; font-size:12px; }
+  .card.col .img svg { width:22px; height:22px; stroke:#F5F1E8; fill:none; stroke-width:1.6; margin-bottom:4px; }
+  .card.col .cb { padding:10px 14px 12px; }
+  .card.col .cb b { font-size:12.5px; }
+  .card.col .cb span { font-size:10.5px; color:var(--muted); display:block; margin-top:3px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .card .img-sq { width:62px; height:62px; border-radius:12px; flex-shrink:0; display:grid; place-items:center; color:#F5F1E8; font-size:11px; }
+  .chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; flex-shrink:0; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { padding:7px 15px; border-radius:999px; border:1px solid var(--border); background:var(--surface); font:inherit; font-size:12px; color:var(--ink); cursor:pointer; white-space:nowrap; transition:all .18s; }
+  .chip:hover { border-color:var(--accent); }
+  .chip:active { transform:scale(0.95); }
+  .chip.on { background:var(--accent); border-color:var(--accent); color:#F5F1E8; font-weight:600; }
+  .chip.gld { border-color:var(--gold); color:var(--gold-ink); background:rgba(201,169,106,0.1); }
+  .chip:disabled { opacity:.45; cursor:not-allowed; }
+  .stars { color:var(--gold); font-size:12px; letter-spacing:1.5px; }
+  .ratebtn { display:flex; gap:8px; justify-content:center; padding:6px 0; }
+  .ratebtn button { width:34px; height:34px; border-radius:10px; background:var(--surface); border:1px solid var(--border); display:grid; place-items:center; color:#D8CEBB; cursor:pointer; transition:all .15s; }
+  .ratebtn button svg { width:18px; height:18px; stroke:currentColor; fill:currentColor; }
+  .ratebtn button:hover { transform:scale(1.12); border-color:var(--gold); }
+  .ratebtn button.lit { color:var(--gold); border-color:var(--gold); background:rgba(201,169,106,0.1); }
+  .ratebtn button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .likebtn { display:inline-flex; align-items:center; gap:6px; background:none; border:1px solid var(--border); border-radius:999px; padding:8px 16px; font:inherit; font-size:12px; color:var(--ink); cursor:pointer; transition:all .18s; }
+  .likebtn svg { width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.8; }
+  .likebtn:hover { border-color:var(--gold-ink); color:var(--gold-ink); }
+  .likebtn.liked { background:rgba(201,169,106,0.12); border-color:var(--gold); color:var(--gold-ink); }
+  .likebtn.liked svg { fill:currentColor; }
+  .likebtn:active { transform:scale(0.94); }
+  .btn { display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; padding:13px 20px; border-radius:14px; border:none; font:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:transform .12s, box-shadow .12s, opacity .15s; }
+  .btn.p { background:var(--accent); color:#F5F1E8; box-shadow:0 8px 20px -8px rgba(31,61,43,0.55); }
+  .btn.p:hover { background:var(--accent-deep); }
+  .btn.p:active { transform:scale(0.98); box-shadow:none; }
+  .btn.p:disabled { background:#D8CEBB; box-shadow:none; cursor:not-allowed; opacity:.8; }
+  .btn.s { background:var(--surface); border:1px solid var(--border); color:var(--ink); }
+  .btn.s:hover { border-color:var(--gold-ink); color:var(--gold-ink); }
+  .btn.s:active { transform:scale(0.98); }
+  .btn.g { background:rgba(201,169,106,0.14); color:var(--gold-ink); }
+  .btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .bar-cta { flex:0 0 auto; padding:10px 16px 14px; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); border-top:1px solid var(--border); display:flex; gap:10px; }
+  .frow { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13px; }
+  .frow span { color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .frow span svg { width:15px; height:15px; stroke:var(--muted); fill:none; stroke-width:1.7; }
+  .frow b { font-weight:500; text-align:right; }
+  .frow input, .frow textarea { border:none; outline:none; font:inherit; text-align:right; background:transparent; color:var(--ink); width:100%; }
+  .frow.err { border-color:var(--danger); }
+  .ferr { font-size:11px; color:var(--danger); padding:0 4px; display:none; }
+  .frow.err + .ferr { display:block; }
+  .amount { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:13px 15px; font-size:12.5px; display:flex; flex-direction:column; gap:8px; }
+  .amount .r { display:flex; justify-content:space-between; color:var(--muted); }
+  .amount .r b { color:var(--ink); font-weight:500; font-family:var(--font-mono); }
+  .amount .total { border-top:1px dashed var(--border); margin-top:6px; padding-top:10px; display:flex; justify-content:space-between; align-items:baseline; }
+  .amount .total span { color:var(--ink); font-weight:600; }
+  .amount .total b { color:var(--accent); font-size:22px; font-family:var(--font-mono); letter-spacing:-0.02em; }
+  .tl { display:flex; flex-direction:column; }
+  .tl .t { display:flex; gap:10px; position:relative; padding-bottom:16px; }
+  .tl .t:last-child { padding-bottom:0; }
+  .tl .t::before { content:""; position:absolute; left:6px; top:18px; bottom:0; width:2px; background:var(--border); }
+  .tl .t:last-child::before { display:none; }
+  .tl .t i { width:14px; height:14px; border-radius:50%; border:2px solid #D8CEBB; background:var(--surface); flex-shrink:0; z-index:1; margin-top:2px; }
+  .tl .t.done i { border-color:var(--accent); background:var(--accent); }
+  .tl .t.now i { border-color:var(--gold); background:var(--gold); box-shadow:0 0 0 4px rgba(201,169,106,0.18); }
+  .tl .t .tb b { font-size:13px; display:block; }
+  .tl .t .tb span { font-size:10.5px; color:var(--muted); }
+  .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:10px; border:1px solid var(--border); color:var(--muted); }
+  .badge.hot { background:var(--accent); border-color:var(--accent); color:#F5F1E8; }
+  .badge.grn { background:var(--green); border-color:var(--green); color:#fff; }
+  .badge.gld { background:var(--gold); border-color:var(--gold); color:var(--ink); font-weight:600; }
+  .otab { display:flex; border-bottom:1px solid var(--border); margin:0 16px; flex-shrink:0; }
+  .otab button { flex:1; background:none; border:none; font:inherit; font-size:13px; color:var(--muted); padding:12px 0; cursor:pointer; border-bottom:2px solid transparent; }
+  .otab button.on { color:var(--gold-ink); font-weight:600; border-bottom-color:var(--gold); }
+  .otab button:hover { color:var(--ink); }
+  .empty { text-align:center; padding:44px 24px; color:var(--muted); }
+  .empty svg { width:44px; height:44px; stroke:var(--border); fill:none; stroke-width:1.4; }
+  .empty b { display:block; color:var(--ink); font-size:14px; margin-top:12px; }
+  .empty span { font-size:12px; }
+  .empty button { margin-top:14px; }
+  .overlay { position:absolute; inset:0; background:rgba(28,38,32,0.45); display:none; align-items:center; justify-content:center; z-index:50; padding:24px; }
+  .overlay.on { display:flex; }
+  .paycard { background:var(--surface); border-radius:22px; padding:26px 24px; width:100%; max-width:320px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.25); }
+  .paycard .spin { width:42px; height:42px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--gold); margin:0 auto 14px; animation:rot .8s linear infinite; }
+  @keyframes rot { to { transform:rotate(360deg); } }
+  .paycard .ok { width:52px; height:52px; border-radius:50%; background:var(--accent); color:#F5F1E8; display:grid; place-items:center; margin:0 auto 12px; animation:pop .35s cubic-bezier(0.2,0,0,1); }
+  .paycard .ok svg { width:26px; height:26px; stroke:#F5F1E8; fill:none; stroke-width:2.2; }
+  @keyframes pop { 0%{transform:scale(0.4)} 100%{transform:scale(1)} }
+  .paycard b { font-size:16px; display:block; }
+  .paycard span { font-size:12px; color:var(--muted); display:block; margin-top:6px; line-height:1.6; }
+  .paycard .amt { font-family:var(--font-mono); font-size:30px; font-weight:700; color:var(--accent); margin:8px 0 4px; letter-spacing:-0.02em; }
+  .toast { position:absolute; left:50%; bottom:110px; transform:translateX(-50%) translateY(10px); background:rgba(28,38,32,0.92); color:#F5F1E8; font-size:12.5px; padding:10px 20px; border-radius:999px; opacity:0; pointer-events:none; transition:all .25s; z-index:60; white-space:nowrap; max-width:86%; text-align:center; }
+  .toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+  .tabbar { flex:0 0 auto; display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--border); background:rgba(255,255,255,0.94); backdrop-filter:blur(16px); padding:7px 6px 12px; }
+  .tabbar button { background:none; border:none; font:inherit; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; color:var(--muted); cursor:pointer; padding:5px 0; border-radius:10px; }
+  .tabbar button svg { width:21px; height:21px; stroke:currentColor; fill:none; stroke-width:1.7; }
+  .tabbar button.on { color:var(--accent); font-weight:600; }
+  .tabbar button.on svg { stroke-width:2; }
+  .tabbar button:hover { color:var(--accent-deep); }
+  .tabbar button:active { transform:scale(0.94); }
+  .foot { flex:0 0 26px; position:relative; }
+  .foot::after { content:''; position:absolute; left:50%; bottom:7px; transform:translateX(-50%); width:130px; height:5px; border-radius:999px; background:var(--ink); opacity:0.85; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="stage-caption"><b>私厨到家 · 上海</b> · 用户端可交互原型 · V5 · 高级私宴</div>
+  <div class="app" id="app" role="application" aria-label="私厨到家用户端原型">
+
+    <div class="sbar"><span>9:41</span><span class="sg"><i></i><i></i><i></i><i></i></span></div>
+
+    <!-- ═══ 首页 ═══ -->
+    <section class="screen on" id="sc-home" data-od-id="home">
+      <header class="abar">
+        <div>
+          <div class="loc"><svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.7"><path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>上海 · 黄浦区</div>
+          <div class="t">私厨到家</div>
+        </div>
+        <div>
+          <button class="iconbtn" aria-label="搜索" onclick="go('sc-search')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
+          <button class="iconbtn" aria-label="消息" onclick="toast('暂无新消息')"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+        </div>
+      </header>
+      <div class="body">
+        <div class="banner" id="banner" role="region" aria-label="活动轮播">
+          <div class="slide on" style="background:linear-gradient(120deg,#1F3D2B,#0F2117)"><span class="chip-tag">平台保障</span><b>私宴管家 · 上门主理</b><span>签约主厨 · 平台担保 · 每单自动投保</span></div>
+          <div class="slide" style="background:linear-gradient(120deg,#8A6D35,#4E3B18)"><span class="chip-tag">新客礼遇</span><b>首单立减 30 元</b><span>注册即领优惠券，下单自动抵扣</span></div>
+          <div class="slide" style="background:linear-gradient(120deg,#2E4A3B,#1B2F25)"><span class="chip-tag">师傅秀</span><b>看主厨秀手艺</b><span>关注喜欢的主厨，第一时间约到家</span></div>
+          <div class="dots" id="bdots"></div>
+        </div>
+        <div class="ent">
+          <button onclick="go('sc-demand')"><i style="background:#1F3D2B"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg></i>发布需求</button>
+          <button onclick="go('sc-cheflist')"><i style="background:#8A6D35"><svg viewBox="0 0 24 24"><path d="M4 18v-6a8 8 0 0 1 16 0v6"/><path d="M2 18h20v3H2z"/></svg></i>找主厨</button>
+          <button onclick="go('sc-menulist')"><i style="background:#B07D22"><svg viewBox="0 0 24 24"><path d="M4 4h16v6H4zM4 14h16v6H4z"/><path d="M8 7h.01M8 17h.01"/></svg></i>点菜单</button>
+          <button onclick="go('sc-show')"><i style="background:#5C431F"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></i>师傅秀</button>
+        </div>
+        <div class="sec"><b>推荐主厨</b><button onclick="go('sc-cheflist')">查看全部</button></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-chefdetail')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')go('sc-chefdetail')">
+          <div class="av" style="background:#1F3D2B">沈</div>
+          <div class="bd"><b>沈师傅 · 本帮菜 18 年</b><span><span class="stars">★★★★★</span> 4.9 · 完成 286 单</span><span><span class="badge hot">签约主厨</span> 徐汇区 · 明日可约</span></div>
+          <div class="rt"><b>¥168/次</b><span>服务费</span></div>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-chefdetail')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')go('sc-chefdetail')">
+          <div class="av" style="background:#8A6D35">张</div>
+          <div class="bd"><b>张师傅 · 川菜 15 年</b><span><span class="stars">★★★★★</span> 4.9 · 完成 328 单</span><span><span class="badge hot">签约主厨</span> 黄浦区 · 今天可约</span></div>
+          <div class="rt"><b>¥128/次</b><span>服务费</span></div>
+        </div>
+        <div class="sec"><b>本周师傅秀</b><button onclick="go('sc-show')">更多</button></div>
+        <div class="row2">
+          <div class="card col" style="cursor:pointer" onclick="go('sc-show')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')go('sc-show')">
+            <div class="img" style="background:linear-gradient(120deg,#1F3D2B,#0F2117)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+            <div class="cb"><b>本帮红烧肉教程</b><span>沈师傅 · 点赞 1.4k</span></div>
+          </div>
+          <div class="card col" style="cursor:pointer" onclick="go('sc-show')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')go('sc-show')">
+            <div class="img" style="background:linear-gradient(120deg,#8A6D35,#4E3B18)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+            <div class="cb"><b>秋季蟹宴搭配</b><span>王师傅 · 点赞 986</span></div>
+          </div>
+        </div>
+        <div class="sec"><b>推荐菜单</b><button onclick="go('sc-menudetail')">查看</button></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')go('sc-menudetail')">
+          <div class="img-sq" style="background:linear-gradient(135deg,#1F3D2B,#0F2117)">10人宴</div>
+          <div class="bd"><b>10 人本帮家宴套餐 · 沈师傅</b><span>4 凉 8 热 1 汤 · 含食材代采购</span></div>
+          <div class="rt"><b>¥888 起</b></div>
+        </div>
+      </div>
+      <nav class="tabbar">
+        <button class="on" data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>首页</button>
+        <button data-tab="need"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>需求</button>
+        <button data-tab="order"><svg viewBox="0 0 24 24"><path d="M6 2h12v20l-6-4-6 4z"/></svg>订单</button>
+        <button data-tab="mine"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>我的</button>
+      </nav>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 主厨列表 ═══ -->
+    <section class="screen" id="sc-cheflist" data-od-id="chef-list">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">找主厨</div>
+        <button class="iconbtn" aria-label="搜索" onclick="toast('搜索主厨演示')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
+      </header>
+      <div class="body">
+        <div class="chips" id="cuisineChips">
+          <button class="chip on">全部</button><button class="chip">本帮菜</button><button class="chip">粤菜</button><button class="chip">川菜</button><button class="chip">家宴</button><button class="chip">月子餐</button>
+        </div>
+        <div class="chips">
+          <button class="chip on">评分优先</button><button class="chip">距离近</button><button class="chip">今日可约</button><button class="chip">价格从低到高</button>
+        </div>
+        <div id="chefList"></div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 主厨详情 ═══ -->
+    <section class="screen" id="sc-chefdetail" data-od-id="chef-detail">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">沈师傅</div>
+        <button class="iconbtn" aria-label="收藏" id="chefLike" onclick="toggleLike(this,'已收藏沈师傅','已取消收藏')"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg></button>
+      </header>
+      <div class="body">
+        <div style="border-radius:18px;background:linear-gradient(120deg,#1F3D2B,#0F2117);color:#F5F1E8;padding:18px;display:flex;gap:14px;align-items:center">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(201,169,106,0.3);display:grid;place-items:center;font-size:19px;font-family:var(--font-display);color:#F5F1E8">沈</div>
+          <div>
+            <b style="font-size:16px;font-family:var(--font-display);letter-spacing:0.02em">沈师傅</b>
+            <span style="display:block;font-size:11px;opacity:.9">本帮菜 · 从业 18 年 · 高级中式烹调师</span>
+            <span style="display:block;font-size:11px;opacity:.9"><span class="stars">★★★★★</span> 4.9 · 286 单 · 点赞 1.4k</span>
+          </div>
+        </div>
+        <div class="card"><div class="bd"><b>服务保障</b><span>健康证已核验 · 平台责任险 · 服务费 ¥168/次</span><span>可服务区域：黄浦 / 徐汇 / 静安</span></div></div>
+        <div class="sec"><b>可约档期</b></div>
+        <div class="chips">
+          <button class="chip on" data-slot>周六 09-19 11:00</button>
+          <button class="chip" data-slot>周六 15:00</button>
+          <button class="chip" data-slot>周日 11:00</button>
+          <button class="chip" data-slot>周日 17:00</button>
+        </div>
+        <div class="sec"><b>拿手菜单</b></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')go('sc-menudetail')">
+          <div class="img-sq" style="background:linear-gradient(135deg,#1F3D2B,#0F2117)">家宴</div>
+          <div class="bd"><b>10 人本帮家宴套餐</b><span>红烧肉 · 油爆虾 · 腌笃鲜…</span></div>
+          <div class="rt"><b>¥888</b></div>
+        </div>
+        <div class="card"><div class="img-sq" style="background:linear-gradient(135deg,#8A6D35,#4E3B18)">2-3人</div><div class="bd"><b>2–3 人精致餐</b><span>两荤一素一汤 + 甜点</span></div><div class="rt"><b>¥298</b></div></div>
+        <div class="sec"><b>用户评价</b></div>
+        <div class="card col"><div class="cb"><b>火候到位，摆盘讲究</b><span>王女士 · 9 月 12 日 · <span class="stars">★★★★★</span></span></div></div>
+        <div class="card col"><div class="cb"><b>准时守信，餐后收拾得干净</b><span>刘先生 · 9 月 5 日 · <span class="stars">★★★★★</span></span></div></div>
+      </div>
+      <div class="bar-cta"><button class="btn p" onclick="go('sc-orderconfirm')">立即预约</button></div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 菜单详情 ═══ -->
+    <section class="screen" id="sc-menudetail" data-od-id="menu-detail">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">本帮家宴套餐</div>
+        <button class="iconbtn" aria-label="收藏" onclick="toggleLike(this,'已收藏菜单','已取消收藏')"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg></button>
+      </header>
+      <div class="body">
+        <div class="banner" style="height:96px;background:linear-gradient(120deg,#1F3D2B,#0F2117)"><div class="slide on"><span class="chip-tag">沈师傅出品</span><b>10 人本帮家宴套餐</b><span>4 凉 8 热 1 汤 1 甜 · 本帮风味</span></div></div>
+        <div class="card" style="justify-content:space-between"><div class="bd"><b>¥888 / 桌</b><span>食材代采购 +¥158（可选）</span></div><div class="rt"><b style="color:var(--gold-ink)">2 人已订</b></div></div>
+        <div class="sec"><b>菜单明细</b></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:13px 15px;font-size:12.5px;display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;justify-content:space-between"><span>凉菜四碟</span><span style="color:var(--muted)">糖醋小排 · 白斩鸡 · 四喜烤麸 · 素蟹粉</span></div>
+          <div style="display:flex;justify-content:space-between"><span>热菜八道</span><span style="color:var(--muted)">本帮红烧肉 · 油爆虾 · 响油鳝丝…</span></div>
+          <div style="display:flex;justify-content:space-between"><span>汤品甜点</span><span style="color:var(--muted)">腌笃鲜 · 酒酿圆子 · 主食</span></div>
+        </div>
+        <div class="sec"><b>食材清单</b></div>
+        <div class="card"><div class="bd"><b>平台代采购</b><span>黑毛猪五花 1.5kg · 河虾 1kg · 鲜蹄髈 1 只 · 时蔬 6 种</span><span>供应链备货配送，随订单送达，新鲜有保障</span></div></div>
+        <div class="card"><div class="bd"><b>服务说明</b><span>主厨上门约 3.5 小时 · 含餐后清洁 · 可备注忌口</span></div></div>
+      </div>
+      <div class="bar-cta"><button class="btn p" onclick="go('sc-orderconfirm')">选这个菜单 · ¥888 起</button></div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 需求大厅（tab）═══ -->
+    <section class="screen" id="sc-demandlist" data-od-id="demand-list">
+      <header class="abar">
+        <div class="t">需求大厅</div>
+        <button class="iconbtn" aria-label="发布需求" onclick="go('sc-demand')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      </header>
+      <div class="body">
+        <div class="card" style="cursor:pointer" onclick="go('sc-quote')"><div class="bd"><b>刘先生 · 生日宴 6 人</b><span>周日 18:00 · 黄浦区 · 粤菜 · 预算 ¥600-900</span><span>已收到 3 个报价 · 剩 6 小时</span></div><div class="rt"><b style="color:var(--gold-ink)">去报价</b></div></div>
+        <div class="card"><div class="bd"><b>陈女士 · 月子餐</b><span>每周一三五 · 长期需求 · 清淡营养</span><span>已收到 5 个报价 · 剩 1 天</span></div><div class="rt"><b style="color:var(--gold-ink)">去报价</b></div></div>
+        <div class="card"><div class="bd"><b>赵先生 · 乔迁宴 10 人</b><span>下周六 12:00 · 浦东联洋 · 本帮菜</span><span>已收到 2 个报价 · 剩 2 天</span></div><div class="rt"><b style="color:var(--gold-ink)">去报价</b></div></div>
+        <div class="empty">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>
+          <b>没有更多需求了</b><span>试试发布你自己的用餐需求</span>
+          <button class="btn p" style="width:auto;padding:10px 28px;font-size:13px" onclick="go('sc-demand')">发布需求</button>
+        </div>
+      </div>
+      <nav class="tabbar">
+        <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>首页</button>
+        <button class="on" data-tab="need"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>需求</button>
+        <button data-tab="order"><svg viewBox="0 0 24 24"><path d="M6 2h12v20l-6-4-6 4z"/></svg>订单</button>
+        <button data-tab="mine"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>我的</button>
+      </nav>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 发布需求 ═══ -->
+    <section class="screen" id="sc-demand" data-od-id="demand">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">发布用餐需求</div><div></div>
+      </header>
+      <div class="body">
+        <div class="chips" id="demandType"><button class="chip">家宴聚餐</button><button class="chip on">日常代厨</button><button class="chip">生日宴</button><button class="chip">月子餐</button></div>
+        <div class="frow"><span>服务日期</span><b>每周二、四</b></div>
+        <div class="frow"><span>服务时段</span><b>18:00</b></div>
+        <div class="frow"><span>用餐人数</span><b>2 人</b></div>
+        <div class="frow" id="cuisineRow"><span>期望菜系</span><b>本帮菜 · 清淡</b></div>
+        <div class="frow"><span>预算（每餐）</span><b>¥300 – ¥400</b></div>
+        <div class="frow" id="addrRow"><span>服务地址</span><b>愚园路 68 号 3-1101</b></div>
+        <div class="frow" id="descRow"><span>需求描述</span><input id="demandDesc" value="双职工家庭，口味清淡，食材可自备" aria-label="需求描述" /></div>
+        <div class="ferr" id="demandErr">请先填写服务地址</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">发布后将推送给匹配主厨报价，需求 24 小时有效；选定报价后自动生成正式订单。</div>
+        <button class="btn p" id="demandBtn" onclick="submitDemand()">发布需求</button>
+        <button class="btn s" onclick="go('sc-cheflist')">还是想直接找主厨？</button>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 下单确认 ═══ -->
+    <section class="screen" id="sc-orderconfirm" data-od-id="order-confirm">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">确认订单</div><div></div>
+      </header>
+      <div class="body">
+        <div class="card"><div class="bd"><b>沈师傅 · 10 人本帮家宴</b><span>周六 11:00 · 徐汇区衡山路 890 弄</span></div><div class="rt"><b>¥888</b></div></div>
+        <div class="frow"><span>服务时间</span><b id="ocTime">周六 09-19 11:00</b></div>
+        <div class="chips" id="ocSlots">
+          <button class="chip on">周六 11:00</button><button class="chip">周六 15:00</button><button class="chip">周日 11:00</button>
+        </div>
+        <div class="frow"><span>服务地址</span><b>衡山路 890 弄 7-302</b></div>
+        <div class="frow"><span>用餐人数</span><b><button class="iconbtn" style="display:inline-grid;width:26px;height:26px;font-size:16px;vertical-align:middle" onclick="stepper(-1)" aria-label="减少人数">−</button> <span id="persons" style="font-family:var(--font-mono)">10</span> <button class="iconbtn" style="display:inline-grid;width:26px;height:26px;font-size:16px;vertical-align:middle" onclick="stepper(1)" aria-label="增加人数">+</button></b></div>
+        <div class="frow"><span>代采购食材</span><b id="stockToggle" style="color:var(--gold-ink);cursor:pointer" onclick="toggleStock(this)">是 · +¥158</b></div>
+        <div class="frow"><span>备注</span><input placeholder="少油 · 有老人" aria-label="订单备注" /></div>
+        <div class="amount">
+          <div class="r"><span>套餐</span><b>¥888.00</b></div>
+          <div class="r"><span>上门服务费</span><b>¥168.00</b></div>
+          <div class="r" id="stockLine"><span>食材代采购</span><b>¥158.00</b></div>
+          <div class="r"><span>优惠券（新客减 30）</span><b>-¥30.00</b></div>
+          <div class="total"><span>实付</span><b id="ocTotal">¥1,184.00</b></div>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6">服务前 24 小时可免费取消；平台统一收款，履约完成后分账给主厨与供应链。</div>
+      </div>
+      <div class="bar-cta"><button class="btn p" onclick="go('sc-pay')">提交并支付 ¥1,184</button></div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 收银台 ═══ -->
+    <section class="screen" id="sc-pay" data-od-id="pay">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">收银台</div><div></div>
+      </header>
+      <div class="body">
+        <div style="text-align:center;padding:20px 0 10px"><span style="font-size:12px;color:var(--muted)">应付金额</span><div id="payBig" style="font-size:40px;font-weight:700;font-family:var(--font-mono);color:var(--accent);letter-spacing:-0.02em">¥1,184.00</div></div>
+        <div class="card" style="cursor:pointer" onclick="toast('当前演示仅支持微信支付')"><div class="bd"><b>微信支付</b><span>平台统一收款 · 履约后分账</span></div><span style="color:var(--green);font-weight:700">✓</span></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-coupons')"><div class="bd"><b>优惠券</b><span>新客立减 ¥30 已使用</span></div><span style="color:var(--gold-ink)">›</span></div>
+        <div class="card"><div class="bd"><b>订单信息</b><span>沈师傅 · 10 人本帮家宴 · 周六 11:00</span></div></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.7;padding:0 4px;cursor:pointer" onclick="go('sc-agreement')">支付即代表同意《服务协议》与《质量与免责说明》（点击查看全文）<br/>每笔订单自动投保平台责任险</div>
+      </div>
+      <div class="bar-cta"><button class="btn p" onclick="startPay()">确认支付 ¥1,184.00</button></div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 订单列表（tab）═══ -->
+    <section class="screen" id="sc-orderlist" data-od-id="order-list">
+      <header class="abar">
+        <div class="t">我的订单</div>
+        <button class="iconbtn" aria-label="搜索" onclick="toast('可按单号搜索订单')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
+      </header>
+      <div class="otab" id="orderTabs">
+        <button class="on" data-f="all">全部</button><button data-f="wait">待接单</button><button data-f="doing">进行中</button><button data-f="done">已完成</button>
+      </div>
+      <div class="body" id="orderBody"></div>
+      <nav class="tabbar">
+        <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>首页</button>
+        <button data-tab="need"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>需求</button>
+        <button class="on" data-tab="order"><svg viewBox="0 0 24 24"><path d="M6 2h12v20l-6-4-6 4z"/></svg>订单</button>
+        <button data-tab="mine"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>我的</button>
+      </nav>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 订单详情 ═══ -->
+    <section class="screen" id="sc-orderdetail" data-od-id="order-detail">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">订单详情</div><div></div>
+      </header>
+      <div class="body">
+        <div class="tl">
+          <div class="t done"><i></i><div class="tb"><b>已支付</b><span>9 月 15 日 10:02 · 微信支付 ¥1,184.00</span></div></div>
+          <div class="t done"><i></i><div class="tb"><b>已接单 · 沈师傅</b><span>正在确认菜单与备货方式</span></div></div>
+          <div class="t now"><i></i><div class="tb"><b>备货中</b><span>供应链按食材清单备货 · 预计 09:00 送达</span></div></div>
+          <div class="t"><i></i><div class="tb"><b>待上门</b><span>周六 11:00 前到达</span></div></div>
+          <div class="t"><i></i><div class="tb"><b>服务中 → 已完成</b><span>完成后可评价与点赞</span></div></div>
+        </div>
+        <div class="card"><div class="av" style="background:#1F3D2B">沈</div><div class="bd"><b>沈师傅</b><span><span class="stars">★★★★★</span> 4.9 · 286 单</span></div><div class="rt"><b style="color:var(--gold-ink)">联系</b></div></div>
+        <div class="frow"><span>服务时间</span><b>周六 09-19 11:00</b></div>
+        <div class="frow"><span>服务地址</span><b>衡山路 890 弄 7-302</b></div>
+        <div class="frow"><span>订单金额</span><b>¥1,184.00（含优惠 ¥30）</b></div>
+        <div class="frow"><span>备货状态</span><b style="color:var(--gold-ink)">备货中 · 12 项食材</b></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-aftersale')"><div class="bd"><b>退款与售后</b><span>服务前 24h 免费取消；服务中问题可申请平台介入</span></div><div class="rt"><b style="color:var(--gold-ink)">申请售后</b></div></div>
+      </div>
+      <div class="bar-cta"><button class="btn s" style="flex:1" onclick="toast('已提醒主厨尽快确认')">提醒主厨</button><button class="btn p" style="flex:1" onclick="go('sc-review')">去评价（演示）</button></div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 评价 ═══ -->
+    <section class="screen" id="sc-review" data-od-id="review">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">评价沈师傅</div><div></div>
+      </header>
+      <div class="body">
+        <div class="card"><div class="bd"><b>沈师傅 · 10 人本帮家宴</b><span>9 月 19 日 11:00 · 已服务</span></div><div class="rt"><span class="badge hot">已完成</span></div></div>
+        <div style="text-align:center;padding:6px 0"><b style="font-size:14px" id="rateText">这次服务满意吗？</b></div>
+        <div class="ratebtn" id="ratebtn" role="group" aria-label="星级评分"></div>
+        <div class="chips" id="tagChips">
+          <button class="chip on">口味好</button><button class="chip on">干净卫生</button><button class="chip">准时守信</button><button class="chip">分量足</button><button class="chip">服务热情</button>
+        </div>
+        <div class="frow"><span>写点什么…</span><span style="font-size:10px">0/200</span></div>
+        <div style="display:flex;gap:9px"><div style="flex:1;height:64px;border-radius:12px;border:1px dashed var(--border);display:grid;place-items:center;font-size:11px;color:var(--muted);cursor:pointer" onclick="toast('演示：图片上传位')">+ 上传图片</div></div>
+        <div class="card" style="background:#F1EADB"><div class="bd"><b>点赞沈师傅</b><span>点赞计入师傅人气值，助 TA 被更多人看见</span></div><button class="likebtn liked" id="reviewLike" onclick="toggleLike(this,'已点赞沈师傅','已取消点赞')"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg>已点赞</button></div>
+        <button class="btn p" onclick="submitReview(this)">提交评价</button>
+        <button class="btn s" onclick="toast('演示：评价可在 7 天内修改')">稍后再说</button>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 师傅秀 ═══ -->
+    <section class="screen" id="sc-show" data-od-id="chef-show">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">师傅秀</div>
+        <button class="iconbtn" aria-label="发布" onclick="toast('发布内容演示')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      </header>
+      <div class="body">
+        <div class="chips"><button class="chip on">推荐</button><button class="chip">本帮菜</button><button class="chip">家宴</button><button class="chip">甜点</button><button class="chip">时令</button></div>
+        <div class="card col">
+          <div class="img" style="height:120px;background:linear-gradient(120deg,#1F3D2B,#0F2117)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+          <div class="cb"><b>沈师傅 · 3 步做出本帮红烧肉</b><span>播放 9.2k · 点赞 1.4k · 评论 86 · 2 小时前</span>
+            <div style="display:flex;gap:8px;margin-top:8px"><button class="likebtn" onclick="toggleLike(this,'点赞 +1','已取消点赞')"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg>点赞</button><button class="btn s" style="flex:1;min-height:34px;font-size:11px;padding:8px" onclick="go('sc-chefdetail')">预约沈师傅</button></div>
+            <span style="display:block;color:var(--gold-ink);font-size:10.5px;margin-top:8px;cursor:pointer" onclick="go('sc-showdetail')">查看详情与评论 ›</span>
+          </div>
+        </div>
+        <div class="card col">
+          <div class="img" style="height:120px;background:linear-gradient(120deg,#8A6D35,#4E3B18)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+          <div class="cb"><b>王师傅 · 家宴排菜显高级</b><span>播放 5.2k · 点赞 986 · 评论 54 · 昨天</span>
+            <div style="display:flex;gap:8px;margin-top:8px"><button class="likebtn" onclick="toggleLike(this,'点赞 +1','已取消点赞')"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg>点赞</button><button class="btn s" style="flex:1;min-height:34px;font-size:11px;padding:8px" onclick="toast('王师傅当前不可约')">预约王师傅</button></div>
+            <span style="display:block;color:var(--gold-ink);font-size:10.5px;margin-top:8px;cursor:pointer" onclick="go('sc-showdetail')">查看详情与评论 ›</span>
+          </div>
+        </div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 搜索页 ═══ -->
+    <section class="screen" id="sc-search" data-od-id="search">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">搜索</div><div></div>
+      </header>
+      <div class="body">
+        <div class="frow"><span>主厨 / 菜品 / 套餐</span><span style="font-size:10px">回车或点击结果</span></div>
+        <div class="sec"><b>热门搜索</b></div>
+        <div class="chips"><span class="chip on">本帮菜</span><span class="chip">家宴</span><span class="chip">沈师傅</span><span class="chip">生日宴</span><span class="chip">月子餐</span><span class="chip">腌笃鲜</span></div>
+        <div class="sec"><b>主厨</b></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-chefdetail')"><div class="img-sq" style="background:linear-gradient(135deg,#1F3D2B,#0F2117)">沈</div><div class="bd"><b>沈师傅 · 本帮菜 18 年</b><span><span class="stars">★★★★★</span> 4.9 · 286 单 · 徐汇区</span></div><div class="rt"><b>¥168/次</b></div></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-chefdetail')"><div class="img-sq" style="background:linear-gradient(135deg,#8A6D35,#4E3B18)">张</div><div class="bd"><b>张师傅 · 川菜 15 年</b><span><span class="stars">★★★★★</span> 4.9 · 328 单 · 黄浦区</span></div><div class="rt"><b>¥128/次</b></div></div>
+        <div class="sec"><b>菜单 / 套餐</b></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')"><div class="img-sq" style="background:linear-gradient(135deg,#B07D22,#7E5714)">宴</div><div class="bd"><b>10 人本帮家宴套餐</b><span>¥888 起 · 含代采购 · 沈师傅出品</span></div></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menulist')"><div class="img-sq" style="background:linear-gradient(135deg,#5C431F,#2E1F14)">合</div><div class="bd"><b>秋季时令菜单合集</b><span>12 套 · 现下热门</span></div></div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 菜单列表 ═══ -->
+    <section class="screen" id="sc-menulist" data-od-id="menu-list">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">点菜单</div><div></div>
+      </header>
+      <div class="body">
+        <div class="chips"><span class="chip on">全部</span><span class="chip">家宴</span><span class="chip">日常</span><span class="chip">生日宴</span><span class="chip">月子餐</span></div>
+        <div class="chips"><span class="chip on">推荐排序</span><span class="chip">价格从低到高</span><span class="chip">今日可约</span></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')">
+          <div class="img-sq" style="background:linear-gradient(135deg,#1F3D2B,#0F2117)">10人宴</div>
+          <div class="bd"><b>10 人本帮家宴套餐 · 沈师傅</b><span>4 凉 8 热 1 汤 1 甜 · 含代采购</span><span><span class="stars">★★★★★</span> 4.9 · 2 人已订</span></div>
+          <div class="rt"><b>¥888 起</b></div>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')">
+          <div class="img-sq" style="background:linear-gradient(135deg,#8A6D35,#4E3B18)">2-3人</div>
+          <div class="bd"><b>2–3 人精致餐 · 沈师傅</b><span>两荤一素一汤 + 甜点</span><span><span class="stars">★★★★★</span> 4.8 · 今日可约</span></div>
+          <div class="rt"><b>¥298 起</b></div>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')">
+          <div class="img-sq" style="background:linear-gradient(135deg,#B07D22,#7E5714)">6人宴</div>
+          <div class="bd"><b>6 人粤式家宴 · 王师傅</b><span>老火靓汤 · 清蒸 · 烧味拼盘</span><span><span class="stars">★★★★★</span> 4.7 · 周六可约</span></div>
+          <div class="rt"><b>¥688 起</b></div>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-menudetail')">
+          <div class="img-sq" style="background:linear-gradient(135deg,#5C431F,#2E1F14)">月子</div>
+          <div class="bd"><b>月子餐周套餐 · 陈师傅</b><span>每周一三五配送 · 清淡营养</span><span><span class="stars">★★★★★</span> 4.6 · 长期可约</span></div>
+          <div class="rt"><b>¥350/餐</b></div>
+        </div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 服务模式介绍 ═══ -->
+    <section class="screen" id="sc-service" data-od-id="service-intro">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">服务模式介绍</div><div></div>
+      </header>
+      <div class="body">
+        <div class="banner" style="height:88px;background:linear-gradient(120deg,#1F3D2B,#0F2117)"><div class="slide on"><span class="chip-tag">平台模式</span><b>三种方式，宴请到家</b><span>签约主厨 · 平台担保 · 每单有保险</span></div></div>
+        <div class="card"><div class="bd"><b>方式一 · 找主厨下单</b><span>浏览主厨的资质、评分与档期，选定心仪主厨按档期预约。</span></div></div>
+        <div class="card"><div class="bd"><b>方式二 · 点菜单下单</b><span>直接选择主厨出品的菜单或套餐，由平台指派同菜系主厨履约。</span></div></div>
+        <div class="card"><div class="bd"><b>方式三 · 发布需求</b><span>说明时间、人数、菜系与预算，等待主厨报价，选定后自动转订单。</span></div></div>
+        <div class="sec"><b>服务保障</b></div>
+        <div class="card"><div class="bd"><b>资质与卫生</b><span>主厨健康证强制核验并公示，到期自动停单；上门服务 SOP。</span></div></div>
+        <div class="card"><div class="bd"><b>资金与保险</b><span>平台统一收款，履约完成后 T+1 分账；每单自动投保平台责任险。</span></div></div>
+        <div class="card"><div class="bd"><b>质量与免责</b><span>平台先行赔付兜底；自备食材需签收确认；不可抗力可免费改期。</span></div></div>
+        <button class="btn p" onclick="go('sc-cheflist')">开始找主厨</button>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 报价详情 ═══ -->
+    <section class="screen" id="sc-quote" data-od-id="quote-detail">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">需求报价</div><div></div>
+      </header>
+      <div class="body">
+        <div class="card"><div class="bd"><b>刘先生 · 生日宴 6 人</b><span>周日 18:00 · 黄浦区 · 粤菜 · 预算 ¥600-900</span><span>需求单 D20260916SH0007 · 剩 6 小时</span></div></div>
+        <div class="sec"><b>收到 3 个报价</b><span>选定后其余自动失效</span></div>
+        <div class="card" id="bid-1"><div class="bd"><b>王师傅 · 粤菜 · 4.7 分</b><span>报价 ¥780 · 烧味拼盘 + 清蒸鲈鱼 等 6 菜 1 汤</span><span>档期已确认 · 196 单经验</span></div><div class="rt"><button class="btn p" style="min-height:34px;padding:6px 14px;font-size:11.5px;width:auto" onclick="pickBid(this,'bid-1','王师傅')">选定</button></div></div>
+        <div class="card" id="bid-2"><div class="bd"><b>张师傅 · 川菜 · 4.9 分</b><span>报价 ¥860 · 川粤融合菜单 · 可按口味微调</span><span>档期已确认 · 328 单经验</span></div><div class="rt"><button class="btn s" style="min-height:34px;padding:6px 14px;font-size:11.5px;width:auto" onclick="pickBid(this,'bid-2','张师傅')">选定</button></div></div>
+        <div class="card" id="bid-3"><div class="bd"><b>周师傅 · 本帮菜 · 4.5 分</b><span>报价 ¥688 · 传统本帮六菜一汤</span><span>档期已确认 · 58 单经验</span></div><div class="rt"><button class="btn s" style="min-height:34px;padding:6px 14px;font-size:11.5px;width:auto" onclick="pickBid(this,'bid-3','周师傅')">选定</button></div></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6">选定报价后将生成正式订单并进入支付流程；报价 6 小时内有效。</div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 地址管理 ═══ -->
+    <section class="screen" id="sc-address" data-od-id="address">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">地址管理</div><div></div>
+      </header>
+      <div class="body">
+        <div class="card">
+          <div class="bd"><b>衡山路 890 弄 7-302（默认）</b><span>王先生 · 138****6621 · 徐汇区</span></div>
+          <div class="rt"><span class="badge gld">默认</span></div>
+        </div>
+        <div class="card">
+          <div class="bd"><b>愚园路 68 号 3-1101</b><span>王先生 · 138****6621 · 静安区</span></div>
+          <div class="rt"><button class="btn s" style="min-height:30px;padding:4px 12px;font-size:11px;width:auto" onclick="toast('已设为默认地址')">设为默认</button></div>
+        </div>
+        <div class="card" style="cursor:pointer;border-style:dashed;justify-content:center;color:var(--muted)" onclick="toast('新增地址演示：填写联系人、电话、省市区与门牌')"><b>+ 新增服务地址</b></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6">下单时的服务地址将生成快照写入订单，后续修改地址不影响已完成订单。</div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 优惠券 ═══ -->
+    <section class="screen" id="sc-coupons" data-od-id="coupons">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">优惠券</div><div></div>
+      </header>
+      <div class="body">
+        <div class="chips"><span class="chip on">可用 2</span><span class="chip">已使用</span><span class="chip">已过期</span></div>
+        <div class="card" style="background:#F1EADB"><div class="bd"><b>新客立减 ¥30</b><span>满 ¥200 可用 · 全部服务通用 · 有效期至 2026-12-31</span></div><div class="rt"><b style="color:var(--gold-ink);font-family:var(--font-mono)">¥30</b><button class="btn g" style="min-height:28px;padding:3px 12px;font-size:10.5px;width:auto;margin-top:4px" onclick="couponUse(this,'新客立减 ¥30')">去使用</button></div></div>
+        <div class="card" style="background:#F1EADB"><div class="bd"><b>家宴满 1000 减 80</b><span>限家宴类套餐 · 有效期至 2026-10-31</span></div><div class="rt"><b style="color:var(--gold-ink);font-family:var(--font-mono)">¥80</b><button class="btn g" style="min-height:28px;padding:3px 12px;font-size:10.5px;width:auto;margin-top:4px" onclick="couponUse(this,'家宴满 1000 减 80')">去使用</button></div></div>
+        <div class="card" style="opacity:.55"><div class="bd"><b>会员日 9 折券</b><span>已于 9 月 2 日使用 · 订单 O202609020018</span></div><div class="rt"><span class="badge">已使用</span></div></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6">优惠券在收银台自动匹配最优一张；不与会员折扣叠加。</div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 钱包 ═══ -->
+    <section class="screen" id="sc-wallet" data-od-id="wallet">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">我的钱包</div><div></div>
+      </header>
+      <div class="body">
+        <div class="income">
+          <div class="l">账户余额</div>
+          <div class="v">¥0.00</div>
+          <div class="s">余额来自退款回补与活动奖励 · 提现功能面向厨师端</div>
+        </div>
+        <div class="sec"><b>资产</b></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-coupons')"><div class="bd"><b>优惠券</b><span>可用 2 张 · 新客立减与家宴满减</span></div><b style="color:var(--gold-ink)">›</b></div>
+        <div class="card" style="cursor:pointer" onclick="go('sc-member')"><div class="bd"><b>家庭会员</b><span>已开通 · 2026-12-31 到期</span></div><b style="color:var(--gold-ink)">›</b></div>
+        <div class="sec"><b>余额明细</b></div>
+        <div class="card"><div class="bd"><b>9 月 15 日 · 订单退款回补</b><span>O202609150029 · 部分退款 ¥86.00</span></div><div class="rt"><b style="color:var(--accent);font-family:var(--font-mono)">+¥86.00</b></div></div>
+        <div class="card"><div class="bd"><b>9 月 2 日 · 邀请好友奖励</b><span>好友完成首单后发放，已用于抵扣</span></div><div class="rt"><b style="color:var(--danger);font-family:var(--font-mono)">-¥86.00</b></div></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6">余额可抵扣订单金额，优先于优惠券使用（收银台可切换）。</div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 会员中心 ═══ -->
+    <section class="screen" id="sc-member" data-od-id="membership">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">会员中心</div><div></div>
+      </header>
+      <div class="body">
+        <div style="border-radius:18px;background:linear-gradient(120deg,#1F3D2B,#0F2117);color:#F5F1E8;padding:18px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-family:var(--font-display);font-size:16px;letter-spacing:0.02em">家庭会员</b><span style="font-size:10.5px;opacity:.85">2026-12-31 到期</span></div>
+          <div style="font-size:11.5px;opacity:.85;margin-top:6px;line-height:1.6">每月免 1 次上门服务费 · 优先派单 · 专属客服 · 月宴管家 1 次/季</div>
+        </div>
+        <div class="sec"><b>续费方案</b><span>连续包月可随时取消</span></div>
+        <div class="card" style="cursor:pointer;border-color:var(--gold)" onclick="memberPlan(this,'连续包月')">
+          <div class="bd"><b>连续包月</b><span>首月 ¥9.9 · 次月起 ¥19/月（占位）</span></div>
+          <div class="rt"><span class="badge gld">已选</span></div>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="memberPlan(this,'年度会员')">
+          <div class="bd"><b>年度会员</b><span>¥199/年（占位）· 折合 ¥16.6/月</span></div>
+          <div class="rt"><span class="badge">选择</span></div>
+        </div>
+        <button class="btn p" onclick="toast('已发起会员续费（演示：拉起微信支付）')">立即续费</button>
+        <div class="sec"><b>会员权益说明</b></div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;padding:0 2px">免服务费权益每月 1 日刷新；优先派单在高峰时段生效；权益最终解释见《会员服务协议》。</div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 售后申请 ═══ -->
+    <section class="screen" id="sc-aftersale" data-od-id="aftersale">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">申请售后</div><div></div>
+      </header>
+      <div class="body">
+        <div class="card"><div class="bd"><b>沈师傅 · 10 人本帮家宴</b><span>周六 11:00 · 实付 ¥1,184.00</span></div><div class="rt"><span class="badge gld">备货中</span></div></div>
+        <div class="sec"><b>售后类型</b></div>
+        <div class="chips"><span class="chip on">服务前取消（24h 外免费）</span><span class="chip">菜品质量</span><span class="chip">卫生问题</span><span class="chip">主厨迟到/爽约</span></div>
+        <div class="frow"><span>期望退款</span><b>¥1,184.00（全额）</b></div>
+        <div class="frow"><span>补充说明</span><input placeholder="请描述问题（选填）" aria-label="售后说明" /></div>
+        <div style="display:flex;gap:9px"><div style="flex:1;height:64px;border-radius:12px;border:1px dashed var(--border);display:grid;place-items:center;font-size:11px;color:var(--muted);cursor:pointer" onclick="toast('演示：凭证上传位')">+ 上传凭证</div></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.7">提交后 24h 内客服首响；平台统一收款原路退回，已分账部分走分账回退；责任判定细则见《售后规则》。</div>
+        <button class="btn p" onclick="aftersaleSubmit(this)">提交申请</button>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 客服与投诉 ═══ -->
+    <section class="screen" id="sc-support" data-od-id="support">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">客服与投诉</div><div></div>
+      </header>
+      <div class="body">
+        <div class="card" style="cursor:pointer" onclick="toast('在线客服演示：工作日 9:00-21:00')"><div class="bd"><b>在线客服</b><span>平均响应 2 分钟 · 9:00-21:00</span></div><b style="color:var(--gold-ink)">›</b></div>
+        <div class="card" style="cursor:pointer" onclick="toast('客服热线：400-XXX-XXXX（演示）')"><div class="bd"><b>客服热线</b><span>400-XXX-XXXX · 紧急履约问题优先</span></div><b style="color:var(--gold-ink)">›</b></div>
+        <div class="sec"><b>我的工单</b><span>SLA 24h 首响</span></div>
+        <div id="ticketList" style="display:flex;flex-direction:column;gap:12px">
+        <div class="card"><div class="bd"><b>CT20260915SH0006 · 卫生问题</b><span>O202609120018 · 处理中 · 客服小顾跟进</span></div><div class="rt"><span class="badge gld">处理中</span></div></div>
+        <div class="card"><div class="bd"><b>CT20260902SH0003 · 发票咨询</b><span>已解决 · 已开具电子发票</span></div><div class="rt"><span class="badge hot">已解决</span></div></div>
+        </div>
+        <button class="btn p" onclick="go('sc-aftersale')">新建售后 / 投诉</button>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 师傅秀详情 ═══ -->
+    <section class="screen" id="sc-showdetail" data-od-id="show-detail">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">师傅秀</div><div></div>
+      </header>
+      <div class="body">
+        <div style="border-radius:14px;background:linear-gradient(120deg,#1F3D2B,#0F2117);color:#F5F1E8;height:150px;display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:30px;height:30px;stroke:#F5F1E8;fill:none;stroke-width:1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+        <div><b style="font-family:var(--font-display);font-size:16px">3 步做出本帮红烧肉</b><div style="font-size:11px;color:var(--muted);margin-top:4px">沈师傅 · 9 月 15 日 · 播放 9.2k</div></div>
+        <div class="card"><div class="bd"><span style="font-size:12.5px;color:var(--ink)">火候与糖色是成败关键：冷油下糖炒至枣红，五花肉先煎后炖……（演示内容）</span></div></div>
+        <div style="display:flex;gap:8px"><button class="likebtn" onclick="toggleLike(this,'点赞 +1','已取消点赞')"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg>点赞 1.4k</button><button class="btn s" style="flex:1;min-height:38px;font-size:12px" onclick="go('sc-chefdetail')">预约沈师傅</button></div>
+        <div class="sec"><b>评论 86</b><span>按时间排序</span></div>
+        <div class="card"><div class="bd"><b>王女士</b><span>按这个做成功了，家人说比饭店好吃！</span></div></div>
+        <div class="card"><div class="bd"><b>李先生</b><span>糖色那步有什么替代方案吗？</span></div></div>
+        <div class="card" style="background:#F1EADB"><div class="bd"><b>沈师傅（作者）</b><span>回复李先生：可以用冰糖 + 一小勺水，小火更稳。</span></div></div>
+        <div class="frow"><span>写评论…</span><span style="font-size:10px">发送</span></div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 协议与免责 ═══ -->
+    <section class="screen" id="sc-agreement" data-od-id="agreement">
+      <header class="abar">
+        <button class="iconbtn" aria-label="返回" onclick="back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="t">协议与免责</div><div></div>
+      </header>
+      <div class="body">
+        <div class="chips"><span class="chip on">服务协议</span><span class="chip">隐私政策</span><span class="chip">质量与免责说明</span></div>
+        <div class="card col"><div class="cb"><b>平台服务协议（要点）</b><span>平台提供信息撮合与履约保障服务；订单以平台确认页为准；主厨与用户均须遵守服务规范与取消规则；争议以平台判定 + 保险理赔为先行通道。</span></div></div>
+        <div class="card col"><div class="cb"><b>隐私政策（要点）</b><span>收集范围：手机号、服务地址、位置（签到）、相册（评价/凭证）；用途限于履约与安全；加密存储、最小化使用，可申请注销与删除。</span></div></div>
+        <div class="card col"><div class="cb"><b>质量与免责说明（要点）</b><span>平台先行赔付兜底；自备食材模式需用户/主厨签收确认；不可抗力（极端天气等）可免费改期一次；每单自动投保平台责任险。</span></div></div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6">以上为演示要点，正式版本以法务审定全文为准；支付前可在收银台查看全文。</div>
+      </div>
+      <div class="foot"></div>
+    </section>
+
+    <!-- ═══ 我的 ═══ -->
+    <section class="screen" id="sc-mine" data-od-id="profile">
+      <header class="abar">
+        <div class="t">我的</div>
+        <button class="iconbtn" aria-label="设置" onclick="toast('设置演示')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </header>
+      <div class="body">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px">
+          <div class="av" style="width:52px;height:52px;background:#1F3D2B">王</div>
+          <div><b style="font-size:15px">王先生</b><span style="display:block;font-size:11px;color:var(--muted)">138****6621 · 家庭会员 · 上海站</span></div>
+          <span style="margin-left:auto;font-size:10px;color:var(--gold-ink);background:rgba(201,169,106,0.14);border-radius:999px;padding:4px 10px">实名已认证</span>
+        </div>
+        <div class="card" style="cursor:pointer;justify-content:space-between" onclick="go('sc-wallet')"><div class="bd"><b>我的钱包</b><span>余额 ¥0.00 · 优惠券 2 张</span></div><b style="color:var(--gold-ink)">›</b></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;font-size:13px">
+          <div style="display:flex;justify-content:space-between;padding:13px 15px;border-bottom:1px solid #EFE9DB;cursor:pointer" onclick="go('sc-address')"><span>地址管理</span><span style="color:var(--muted)">›</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 15px;border-bottom:1px solid #EFE9DB;cursor:pointer" onclick="go('sc-member')"><span>会员中心</span><span style="color:var(--muted)">›</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 15px;border-bottom:1px solid #EFE9DB;cursor:pointer" onclick="go('sc-support')"><span>客服与投诉</span><span style="color:var(--muted)">›</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 15px;border-bottom:1px solid #EFE9DB;cursor:pointer" onclick="go('sc-service')"><span>服务模式介绍</span><span style="color:var(--muted)">›</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 15px;border-bottom:1px solid #EFE9DB;cursor:pointer" onclick="go('sc-agreement')"><span>质量与免责说明</span><span style="color:var(--muted)">›</span></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 15px;cursor:pointer" onclick="go('sc-agreement')"><span>协议与隐私</span><span style="color:var(--muted)">›</span></div>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);text-align:center;padding:8px 0">私厨到家 V5.0 · 上海站 · 演示原型</div>
+      </div>
+      <nav class="tabbar">
+        <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>首页</button>
+        <button data-tab="need"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>需求</button>
+        <button data-tab="order"><svg viewBox="0 0 24 24"><path d="M6 2h12v20l-6-4-6 4z"/></svg>订单</button>
+        <button class="on" data-tab="mine"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>我的</button>
+      </nav>
+      <div class="foot"></div>
+    </section>
+
+    <div class="overlay" id="payOverlay" role="dialog" aria-label="支付结果">
+      <div class="paycard" id="payCard">
+        <div class="spin" id="paySpin"></div>
+        <div class="ok" id="payOk" style="display:none"><svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg></div>
+        <b id="payTitle">正在支付…</b>
+        <div class="amt" id="payAmt">¥1,184.00</div>
+        <span id="paySub">请稍候，正在拉起微信支付</span>
+        <button class="btn p" id="payDone" style="display:none;margin-top:16px" onclick="closePay()">完成</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+  let history = ['sc-home'];
+
+  window.go = function(id) {
+    const cur = document.querySelector('.screen.on');
+    if (cur) history.push(cur.id);
+    if (history.length > 12) history.shift();
+    show(id);
+  };
+  window.back = function() {
+    const prev = history.pop() || 'sc-home';
+    if (prev === document.querySelector('.screen.on').id) { show(history.pop() || 'sc-home'); return; }
+    show(prev);
+  };
+  function show(id) {
+    $$('.screen').forEach(s => s.classList.remove('on'));
+    const t = document.getElementById(id);
+    if (!t) return;
+    t.classList.add('on');
+    t.querySelector('.body') && (t.querySelector('.body').scrollTop = 0);
+  }
+
+  const tabMap = { home:'sc-home', need:'sc-demandlist', order:'sc-orderlist', mine:'sc-mine' };
+  $$('.tabbar').forEach(bar => {
+    bar.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.tab;
+        if (!key) return;
+        history = ['sc-home'];
+        show(tabMap[key]);
+        $$('.tabbar').forEach(b => b.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === btn)));
+      });
+    });
+  });
+
+  let toastTimer;
+  window.toast = function(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('on'), 2200);
+  };
+
+  const banner = $('#banner');
+  const slides = banner.querySelectorAll('.slide');
+  const dotsBox = $('#bdots');
+  let bi = 0, bannerTimer;
+  slides.forEach((s, i) => {
+    const d = document.createElement('button');
+    d.setAttribute('aria-label', '第' + (i+1) + '张');
+    if (i === 0) d.classList.add('on');
+    d.addEventListener('click', () => { setSlide(i); restartBanner(); });
+    dotsBox.appendChild(d);
+  });
+  function setSlide(i) {
+    bi = i;
+    slides.forEach((s, j) => s.classList.toggle('on', j === i));
+    dotsBox.querySelectorAll('button').forEach((d, j) => d.classList.toggle('on', j === i));
+  }
+  function restartBanner() {
+    clearInterval(bannerTimer);
+    bannerTimer = setInterval(() => setSlide((bi + 1) % slides.length), 3500);
+  }
+  restartBanner();
+
+  $$('.chips').forEach(box => {
+    box.addEventListener('click', (e) => {
+      const c = e.target.closest('button.chip');
+      if (!c || c.disabled) return;
+      if (box.id === 'tagChips') { c.classList.toggle('on'); return; }
+      box.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
+      c.classList.add('on');
+      if (box.id === 'ocSlots') { $('#ocTime').textContent = c.textContent.trim(); }
+      if (box.id === 'demandType') { toast('需求类型：' + c.textContent.trim()); }
+    });
+  });
+
+  window.toggleLike = function(btn, onMsg, offMsg) {
+    const liked = btn.classList.toggle('liked');
+    if (btn.id === 'reviewLike') {
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z"/></svg>' + (liked ? '已点赞' : '点赞');
+    }
+    toast(liked ? onMsg : offMsg);
+  };
+
+  const chefs = [
+    { n:'沈师傅', c:'本帮菜 · 从业 18 年', r:4.9, cnt:286, badge:'签约主厨', area:'徐汇区', fee:168, bg:'#1F3D2B', av:'沈', avail:'明日可约' },
+    { n:'张师傅', c:'川菜 · 从业 15 年', r:4.9, cnt:328, badge:'签约主厨', area:'黄浦区', fee:128, bg:'#8A6D35', av:'张', avail:'今天可约' },
+    { n:'王师傅', c:'粤菜 · 从业 12 年', r:4.7, cnt:196, badge:'众包', area:'静安区', fee:158, bg:'#5C431F', av:'王', avail:'周六可约' },
+    { n:'陈师傅', c:'淮扬菜 · 从业 10 年', r:4.6, cnt:143, badge:'签约主厨', area:'长宁区', fee:148, bg:'#B07D22', av:'陈', avail:'周日可约' }
+  ];
+  function renderChefs() {
+    $('#chefList').innerHTML = chefs.map((c) => `
+      <div class="card" style="cursor:pointer" role="button" tabindex="0" onclick="go('sc-chefdetail')" onkeydown="if(event.key==='Enter')go('sc-chefdetail')">
+        <div class="av" style="background:${c.bg}">${c.av}</div>
+        <div class="bd"><b>${c.n} · ${c.c}</b><span><span class="stars">★★★★★</span> ${c.r} · 完成 ${c.cnt} 单</span><span><span class="badge ${c.badge==='签约主厨'?'hot':''}">${c.badge}</span> ${c.area} · ${c.avail}</span></div>
+        <div class="rt"><b>¥${c.fee}/次</b><span>服务费</span></div>
+      </div>`).join('');
+  }
+
+  const rateBtn = $('#ratebtn');
+  let rateVal = 5;
+  function renderRate() {
+    rateBtn.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const b = document.createElement('button');
+      b.setAttribute('aria-label', i + ' 星');
+      b.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 3 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 18.3 6.2 21l1.1-6.5L2.6 9.8l6.5-.9z"/></svg>';
+      if (i <= rateVal) b.classList.add('lit');
+      b.addEventListener('click', () => { rateVal = i; renderRate(); $('#rateText').textContent = i >= 4 ? '很满意，五星好评！' : (i >= 3 ? '整体不错，还有提升空间' : '我们会认真改进'); });
+      rateBtn.appendChild(b);
+    }
+  }
+  renderRate();
+
+  const orders = [
+    { no:'O202609160032', chef:'沈师傅 · 10 人本帮家宴', time:'周六 11:00 · 备货中', amt:'¥1,184.00', f:'doing', badge:'gld', bt:'备货中', act:()=>go('sc-orderdetail') },
+    { no:'O202609160031', chef:'张师傅 · 2 人日常餐', time:'9 月 14 日 · 已完成', amt:'¥298.00', f:'done', badge:'hot', bt:'已完成', act:()=>go('sc-review') },
+    { no:'O202609160030', chef:'王师傅 · 3 人轻食', time:'9 月 8 日 · 已取消', amt:'¥386.00', f:'cancel', badge:'', bt:'已取消', act:()=>go('sc-orderdetail') },
+    { no:'O202609160029', chef:'刘先生 · 生日宴 6 人', time:'明天 18:00 · 待接单', amt:'¥658.00', f:'wait', badge:'gld', bt:'待接单', act:()=>go('sc-orderdetail') }
+  ];
+  let orderFilter = 'all';
+  function renderOrders() {
+    const list = orders.filter(o => orderFilter === 'all' || o.f === orderFilter);
+    const body = $('#orderBody');
+    if (!list.length) {
+      body.innerHTML = `<div class="empty">
+        <svg viewBox="0 0 24 24"><path d="M6 2h12v20l-6-4-6 4z"/></svg>
+        <b>这里还没有订单</b><span>去首页看看今天想吃点什么</span>
+        <button class="btn p" style="width:auto;padding:10px 28px;font-size:13px" onclick="go('sc-home')">去逛逛</button>
+      </div>`;
+      return;
+    }
+    body.innerHTML = list.map(o => `
+      <div class="card" style="cursor:pointer" role="button" tabindex="0" onclick="${o.act}">
+        <div class="bd"><b>${o.chef}</b><span>${o.time}</span><span style="margin-top:5px"><span class="badge ${o.badge}">${o.bt}</span></span></div>
+        <div class="rt"><b>${o.amt}</b><span>查看详情</span></div>
+      </div>`).join('');
+  }
+  $('#orderTabs').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    orderFilter = b.dataset.f;
+    $('#orderTabs').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderOrders();
+  });
+
+  let persons = 10, stockOn = true;
+  window.stepper = function(d) {
+    persons = Math.max(1, Math.min(30, persons + d));
+    $('#persons').textContent = persons;
+    toast('用餐人数：' + persons + ' 人');
+  };
+  window.toggleStock = function(el) {
+    stockOn = !stockOn;
+    el.textContent = stockOn ? '是 · +¥158' : '否 · 自备食材';
+    $('#stockLine').style.display = stockOn ? 'flex' : 'none';
+    const total = stockOn ? 1184 : 1026;
+    $('#ocTotal').textContent = '¥' + total.toLocaleString('en-US') + '.00';
+    $('#payBig').textContent = '¥' + total.toLocaleString('en-US') + '.00';
+    $('#payAmt').textContent = '¥' + total.toLocaleString('en-US') + '.00';
+    document.querySelector('#sc-pay .btn.p').textContent = '确认支付 ¥' + total.toLocaleString('en-US') + '.00';
+    document.querySelector('#sc-orderconfirm .btn.p').textContent = '提交并支付 ¥' + total.toLocaleString('en-US');
+    toast(stockOn ? '已开启食材代采购' : '已切换为自备食材');
+  };
+
+  window.startPay = function() {
+    const ov = $('#payOverlay'), spin = $('#paySpin'), ok = $('#payOk'), done = $('#payDone');
+    ov.classList.add('on');
+    spin.style.display = 'block'; ok.style.display = 'none'; done.style.display = 'none';
+    $('#payTitle').textContent = '正在支付…';
+    $('#paySub').textContent = '请稍候，正在拉起微信支付';
+    setTimeout(() => {
+      spin.style.display = 'none'; ok.style.display = 'grid'; done.style.display = 'block';
+      $('#payTitle').textContent = '支付成功';
+      $('#paySub').textContent = '已通知沈师傅，请留意接单状态';
+    }, 1400);
+  };
+  window.closePay = function() {
+    $('#payOverlay').classList.remove('on');
+    history = ['sc-home'];
+    show('sc-orderlist');
+    $$('.tabbar').forEach(b => b.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'order')));
+    renderOrders();
+  };
+
+  window.submitDemand = function() {
+    const addr = $('#addrRow b').textContent.trim();
+    if (!addr || addr === '请选择地址') {
+      $('#addrRow').classList.add('err');
+      $('#demandErr').style.display = 'block';
+      toast('请先填写服务地址');
+      return;
+    }
+    $('#addrRow').classList.remove('err');
+    $('#demandErr').style.display = 'none';
+    const btn = $('#demandBtn');
+    btn.disabled = true;
+    btn.textContent = '发布中…';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '发布需求';
+      history = ['sc-home'];
+      show('sc-demandlist');
+      toast('需求已发布，匹配主厨正在报价');
+    }, 900);
+  };
+  $('#addrRow').addEventListener('click', () => toast('地址已选择：愚园路 68 号 3-1101'));
+
+  window.submitReview = function(btn) {
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+    setTimeout(() => {
+      history = ['sc-home'];
+      show('sc-orderlist');
+      renderOrders();
+      toast('评价已提交，感谢反馈！');
+    }, 900);
+  };
+
+  renderChefs();
+  renderOrders();
+
+  /* V3 新增交互 */
+  window.pickBid = function(btn, cardId, chef) {
+    ['bid-1','bid-2','bid-3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const b = el.querySelector('.rt .btn');
+      if (id === cardId) { b.textContent = '已选定'; b.disabled = true; el.style.borderColor = 'var(--gold)'; }
+      else { b.textContent = '未选中'; b.disabled = true; }
+    });
+    toast('已选定 ' + chef + '，正在生成订单…');
+    setTimeout(() => {
+      orders.unshift({ no:'O202609160033', chef: chef + ' · 生日宴 6 人', time:'明天 18:00 · 待接单', amt:'¥780.00', f:'wait', badge:'gld', bt:'待接单', act:()=>go('sc-orderdetail') });
+      history = ['sc-home'];
+      show('sc-orderlist');
+      $$('.tabbar').forEach(b => b.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.tab === 'order')));
+      renderOrders();
+      toast('订单已生成（按报价 ¥780，已抵新客券 ¥30）· 等待主厨确认');
+    }, 1100);
+  };
+  window.couponUse = function(btn, name) {
+    history.push('sc-coupons');
+    show('sc-orderconfirm');
+    toast('已选择「' + name + '」，收银台将自动抵扣');
+  };
+  window.memberPlan = function(card, name) {
+    $$('#sc-member .card').forEach(c => { const bdg = c.querySelector('.rt .badge'); if (bdg) { bdg.className = 'badge'; bdg.textContent = '选择'; } c.style.borderColor = ''; });
+    card.style.borderColor = 'var(--gold)';
+    const bdg = card.querySelector('.rt .badge');
+    bdg.className = 'badge gld'; bdg.textContent = '已选';
+    toast('已选择 ' + name);
+  };
+  window.aftersaleSubmit = function(btn) {
+    btn.disabled = true; btn.textContent = '提交中…';
+    setTimeout(() => {
+      const tl = document.getElementById('ticketList');
+      if (tl && !tl.querySelector('[data-new]')) {
+        const c = document.createElement('div');
+        c.className = 'card';
+        c.setAttribute('data-new','1');
+        c.innerHTML = '<div class="bd"><b>CT20260916SH0007 · 售后申请（新）</b><span>O202609160032 · 已受理 · SLA 24h 首响</span></div><div class="rt"><span class="badge gld">处理中</span></div>';
+        tl.prepend(c);
+      }
+      history = ['sc-home'];
+      show('sc-support');
+      btn.disabled = false; btn.textContent = '提交申请';
+      toast('售后已提交并生成工单，可在「客服与投诉」跟踪');
+    }, 900);
+  };
+})();
+</script>
+</body>
+</html>
