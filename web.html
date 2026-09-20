@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>V4 私厨上门平台-管理端可交互原型 · 上海站</title>
+<script id="auto-designer-preview-contract" type="application/json">
+{
+  "artifactRole": "interactive-prototype",
+  "authoringViewport": { "width": 1440, "height": 900 },
+  "deviceAdaptation": { "enabled": true, "strategy": "responsive", "supportedDevices": ["desktop", "tablet", "mobile"] },
+  "defaultDevice": "desktop"
+}
+</script>
+<style>
+  :root {
+    --bg:#F5F1E8; --surface:#FFFFFF; --ink:#1C2620; --muted:#8B8477; --border:#E3DCCB;
+    --accent:#1F3D2B; --accent-deep:#142A1E; --gold:#C9A96A; --gold-ink:#8A6D35;
+    --green:#3E7A5C; --danger:#A63A2E; --warn:#B07D22;
+    --font-display:"Noto Serif SC","Songti SC","SimSun",serif;
+    --font-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+    --font-mono:Consolas,monospace;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body { background:var(--bg); font-family:var(--font-body); color:var(--ink); font-size:14px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .shell { display:flex; height:100vh; min-height:640px; overflow:hidden; }
+  .side { flex:0 0 200px; background:var(--accent); color:#C9C4B4; display:flex; flex-direction:column; padding:20px 0 14px; }
+  .side .logo { font-family:var(--font-display); color:#F5F1E8; font-size:19px; padding:0 22px 16px; letter-spacing:0.04em; border-bottom:1px solid rgba(245,241,232,0.15); }
+  .side .logo small { display:block; font-family:var(--font-body); font-size:10px; color:rgba(245,241,232,0.6); letter-spacing:0.1em; margin-top:4px; }
+  .side nav { flex:1; padding:12px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; }
+  .side nav button { background:none; border:none; font:inherit; font-size:13.5px; color:#C9C4B4; text-align:left; padding:10px 14px; border-radius:10px; cursor:pointer; border-left:2px solid transparent; }
+  .side nav button:hover { color:#F5F1E8; background:rgba(245,241,232,0.08); }
+  .side nav button.on { color:#F5F1E8; background:rgba(201,169,106,0.22); border-left-color:var(--gold); font-weight:600; }
+  .side .foot { padding:12px 22px 0; font-size:10.5px; color:rgba(245,241,232,0.5); border-top:1px solid rgba(245,241,232,0.12); }
+  .main { flex:1; display:flex; flex-direction:column; min-width:0; }
+  .topbar { flex:0 0 58px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:var(--surface); border-bottom:1px solid var(--border); }
+  .topbar .crumb { font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:0.02em; }
+  .topbar .who { display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--muted); }
+  .topbar .who .av { width:30px; height:30px; border-radius:50%; background:var(--accent); color:#F5F1E8; display:grid; place-items:center; font-size:12px; }
+  .content { flex:1; overflow-y:auto; padding:20px 24px 32px; }
+  .view { display:none; }
+  .view.on { display:block; }
+  .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .m { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+  .m b { display:block; font-size:24px; font-family:var(--font-mono); letter-spacing:-0.02em; }
+  .m span { font-size:11.5px; color:var(--muted); }
+  .m .delta { font-size:10.5px; margin-left:6px; color:var(--green); }
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:18px; overflow:hidden; }
+  .panel .p-head { display:flex; align-items:center; justify-content:space-between; padding:13px 18px; border-bottom:1px solid var(--border); font-weight:600; font-size:13.5px; }
+  .panel .p-head .hint { font-size:11.5px; color:var(--muted); font-weight:400; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:11.5px; letter-spacing:0.05em; color:var(--muted); font-weight:600; padding:10px 18px; border-bottom:1px solid var(--border); background:#FBF8F1; white-space:nowrap; }
+  td { padding:11px 18px; border-bottom:1px solid #EFE9DB; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(31,61,43,0.025); }
+  td .mono { font-family:var(--font-mono); font-size:12px; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:10.5px; border:1px solid var(--border); color:var(--muted); white-space:nowrap; }
+  .badge.hot { background:var(--accent); border-color:var(--accent); color:#F5F1E8; }
+  .badge.gld { background:var(--gold); border-color:var(--gold); color:var(--ink); font-weight:600; }
+  .badge.warn { background:var(--warn); border-color:var(--warn); color:#fff; }
+  .badge.dng { background:var(--danger); border-color:var(--danger); color:#fff; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding:7px 16px; border-radius:10px; border:none; font:inherit; font-size:12.5px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .btn.p { background:var(--accent); color:#F5F1E8; }
+  .btn.p:hover { background:var(--accent-deep); }
+  .btn.g { background:rgba(201,169,106,0.16); color:var(--gold-ink); }
+  .btn.g:hover { background:rgba(201,169,106,0.28); }
+  .btn.s { background:var(--surface); border:1px solid var(--border); color:var(--ink); }
+  .btn.s:hover { border-color:var(--gold-ink); color:var(--gold-ink); }
+  .btn.d { background:transparent; border:1px solid var(--border); color:var(--muted); }
+  .btn.d:hover { border-color:var(--danger); color:var(--danger); }
+  .btn:disabled { background:#D8CEBB; color:#fff; cursor:not-allowed; border:none; }
+  .btn.sm { min-height:30px; padding:4px 12px; font-size:11.5px; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { padding:6px 14px; border-radius:999px; border:1px solid var(--border); background:var(--surface); font:inherit; font-size:12px; cursor:pointer; }
+  .chip.on { background:var(--accent); border-color:var(--accent); color:#F5F1E8; font-weight:600; }
+  .switch { position:relative; width:42px; height:24px; border-radius:999px; background:#D8CEBB; border:none; cursor:pointer; transition:background .2s; flex-shrink:0; }
+  .switch::after { content:""; position:absolute; left:3px; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s; }
+  .switch.on { background:var(--accent); }
+  .switch.on::after { transform:translateX(18px); }
+  .alert { display:flex; gap:10px; align-items:flex-start; background:rgba(176,125,34,0.1); border:1px solid rgba(176,125,34,0.35); border-radius:12px; padding:12px 16px; font-size:12.5px; margin-bottom:16px; }
+  .alert .dot { width:8px; height:8px; border-radius:50%; background:var(--warn); margin-top:6px; flex-shrink:0; }
+  .overlay { position:fixed; inset:0; background:rgba(28,38,32,0.45); display:none; align-items:center; justify-content:center; z-index:80; }
+  .overlay.on { display:flex; }
+  .modal { background:var(--surface); border-radius:18px; padding:24px; width:min(460px, calc(100vw - 48px)); box-shadow:0 30px 70px rgba(0,0,0,0.3); }
+  .modal h3 { font-family:var(--font-display); font-size:17px; margin:0 0 10px; }
+  .modal p { font-size:13px; color:var(--muted); margin:0 0 16px; line-height:1.7; }
+  .modal .row { display:flex; gap:10px; justify-content:flex-end; }
+  .toast { position:fixed; left:50%; bottom:36px; transform:translateX(-50%) translateY(10px); background:rgba(28,38,32,0.92); color:#F5F1E8; font-size:13px; padding:11px 22px; border-radius:999px; opacity:0; pointer-events:none; transition:all .25s; z-index:99; white-space:nowrap; }
+  .toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+  .perm-grid { display:grid; grid-template-columns:1.2fr repeat(4, 1fr); font-size:12.5px; }
+  .perm-grid .cell { padding:9px 14px; border-bottom:1px solid #EFE9DB; display:flex; align-items:center; }
+  .perm-grid .head { background:#FBF8F1; font-size:11px; color:var(--muted); font-weight:600; letter-spacing:0.04em; }
+  .perm-grid input { accent-color:var(--accent); width:15px; height:15px; cursor:pointer; }
+  @media (max-width:920px) {
+    .shell { flex-direction:column; }
+    .side { flex:0 0 auto; flex-direction:row; align-items:center; padding:10px 12px; overflow-x:auto; }
+    .side .logo { border:none; padding:0 14px 0 4px; font-size:16px; white-space:nowrap; }
+    .side .logo small { display:none; }
+    .side nav { flex-direction:row; padding:0; }
+    .side nav button { white-space:nowrap; padding:8px 12px; border-left:none; border-radius:8px; }
+    .side .foot { display:none; }
+    .metrics { grid-template-columns:repeat(2,1fr); }
+    .content { padding:14px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="logo">私厨到家<small>管理后台 · 上海站 · V4</small></div>
+    <nav id="nav">
+      <button class="on" data-v="dash">驾驶舱</button>
+      <button data-v="users">用户管理</button>
+      <button data-v="chefs">厨师管理</button>
+      <button data-v="orders">订单管理</button>
+      <button data-v="after">售后工单</button>
+      <button data-v="settle">结算管理</button>
+      <button data-v="content">内容管理</button>
+      <button data-v="supply">供应链</button>
+      <button data-v="perms">角色权限</button>
+      <button data-v="logs">操作日志</button>
+      <button data-v="notify">消息模板</button>
+    </nav>
+    <div class="foot">城市：上海（310100）<br/>演示原型 · 演示数据</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb" id="crumb">驾驶舱</div>
+      <div class="who"><span>运营小顾 · 上海站</span><div class="av">顾</div></div>
+    </div>
+
+    <div class="content">
+      <!-- ═══ 驾驶舱 ═══ -->
+      <section class="view on" id="v-dash">
+        <div class="metrics">
+          <div class="m"><b id="mOrders">142</b><span>今日订单<span class="delta">+12%</span></span></div>
+          <div class="m"><b>¥128,600</b><span>今日 GMV<span class="delta">+9%</span></span></div>
+          <div class="m"><b>98.4%</b><span>履约完成率<span class="delta">+0.6%</span></span></div>
+          <div class="m"><b id="mAudit">5</b><span>待审核主厨</span></div>
+        </div>
+        <div class="alert"><span class="dot"></span><div><b>1 单超时未接（O202609160027）</b>，已超过 30 分钟派单时限，可前往订单管理执行改派。</div></div>
+        <div class="panel">
+          <div class="p-head">最近订单 <span class="hint">实时 · 上海站</span><span><button class="btn s sm" style="min-height:26px;padding:2px 10px;font-size:10.5px" onclick="toast('报表导出任务已创建，完成后可在消息中心下载')">导出报表</button></span></div>
+          <table>
+            <thead><tr><th>订单号</th><th>用户</th><th>主厨</th><th>服务时间</th><th>金额</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">O202609160032</td><td>王先生</td><td>沈师傅</td><td>09-19 11:00</td><td class="mono">¥1,184</td><td><span class="badge gld">备货中</span></td></tr>
+              <tr><td class="mono">O202609160031</td><td>李女士</td><td>张师傅</td><td>09-18 18:00</td><td class="mono">¥298</td><td><span class="badge hot">已完成</span></td></tr>
+              <tr><td class="mono">O202609160030</td><td>刘先生</td><td>—</td><td>09-19 12:00</td><td class="mono">¥688</td><td><span class="badge warn">待接单</span></td></tr>
+              <tr><td class="mono">O202609160029</td><td>陈女士</td><td>王师傅</td><td>09-17 18:00</td><td class="mono">¥386</td><td><span class="badge">已取消</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="p-head">经营提示</div>
+          <table>
+            <tbody>
+              <tr><td>本周末（09-19/20）家宴预约已达 <b>37 单</b>，建议提前与沈师傅、张师傅确认档期余量。</td></tr>
+              <tr><td>需求大厅「月子餐」类近 7 天发布 12 条，撮合成功率偏低，建议扩充月子餐供给。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 用户管理 ═══ -->
+      <section class="view" id="v-users">
+        <div class="panel">
+          <div class="p-head">用户列表 <span class="hint">共 3,284 人 · 上海站</span></div>
+          <table>
+            <thead><tr><th>用户</th><th>手机号</th><th>注册城市</th><th>会员</th><th>订单数</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>王先生</td><td class="mono">138****6621</td><td>上海</td><td>家庭会员</td><td class="mono">18</td><td id="ust-1"><span class="badge hot">正常</span></td><td><button class="btn s sm" onclick="openUser(1)">详情</button> <button class="btn d sm" onclick="toggleUser(1)">封禁</button></td></tr>
+              <tr><td>李女士</td><td class="mono">139****3387</td><td>上海</td><td>—</td><td class="mono">6</td><td id="ust-2"><span class="badge hot">正常</span></td><td><button class="btn s sm" onclick="openUser(2)">详情</button> <button class="btn d sm" onclick="toggleUser(2)">封禁</button></td></tr>
+              <tr><td>赵某（风控）</td><td class="mono">150****2210</td><td>上海</td><td>—</td><td class="mono">31</td><td id="ust-3"><span class="badge dng">已封禁</span></td><td><button class="btn s sm" onclick="openUser(3)">详情</button> <button class="btn s sm" onclick="toggleUser(3)">解封</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 厨师管理 ═══ -->
+      <section class="view" id="v-chefs">
+        <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+          <div class="m"><b id="cAudit">5</b><span>待审核</span></div>
+          <div class="m"><b>42</b><span>可接单</span></div>
+          <div class="m"><b>68%</b><span>本周通过率</span></div>
+        </div>
+        <div class="panel">
+          <div class="p-head">入驻审核 <span class="hint">审核项：身份证实名 · 健康证有效期 · 技能证书 · 试菜视频 · 电子合同</span></div>
+          <table>
+            <thead><tr><th>申请人</th><th>菜系</th><th>资质</th><th>试菜视频</th><th>合作模式</th><th>操作</th></tr></thead>
+            <tbody id="auditBody"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="p-head">在册主厨 <span class="hint">42 名可接单</span></div>
+          <table>
+            <thead><tr><th>主厨</th><th>菜系</th><th>评分</th><th>完成单量</th><th>服务费</th><th>健康证</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>沈师傅</td><td>本帮菜</td><td class="mono">4.9</td><td class="mono">286</td><td class="mono">¥168</td><td><span class="badge hot">有效至 2027-03</span></td><td><span class="badge hot">可接单</span></td><td><button class="btn d sm" onclick="toggleChef(this)">停单</button></td></tr>
+              <tr><td>张师傅</td><td>川菜</td><td class="mono">4.9</td><td class="mono">328</td><td class="mono">¥128</td><td><span class="badge hot">有效至 2026-12</span></td><td><span class="badge hot">可接单</span></td><td><button class="btn d sm" onclick="toggleChef(this)">停单</button></td></tr>
+              <tr><td>吴师傅</td><td>淮扬菜</td><td class="mono">4.5</td><td class="mono">58</td><td class="mono">¥138</td><td><span class="badge warn">30 天内到期</span></td><td><span class="badge hot">可接单</span></td><td><button class="btn d sm" onclick="toggleChef(this)">停单</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 订单管理 ═══ -->
+      <section class="view" id="v-orders">
+        <div class="chips" id="orderFilter" style="margin-bottom:14px">
+          <button class="chip on" data-f="all">全部</button><button class="chip" data-f="wait">待接单</button><button class="chip" data-f="doing">进行中</button><button class="chip" data-f="done">已完成</button><button class="chip" data-f="cancel">已取消</button>
+        </div>
+        <div class="panel">
+          <div class="p-head">订单列表 <span class="hint" id="orderHint"></span></div>
+          <table>
+            <thead><tr><th>订单号</th><th>用户 / 主厨</th><th>服务时间</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="orderBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 结算管理 ═══ -->
+      <section class="view" id="v-settle">
+        <div class="metrics">
+          <div class="m"><b>¥15,430</b><span>平台佣金（日）</span></div>
+          <div class="m"><b>¥92,580</b><span>主厨分账（日）</span></div>
+          <div class="m"><b>¥20,590</b><span>供应链货款（日）</span></div>
+          <div class="m"><b id="mPend">3</b><span>待分账/异常</span></div>
+        </div>
+        <div class="panel">
+          <div class="p-head">分账记录 <span class="hint">T+1 · 微信支付 ProfitSharing · 提额报备已获批（上限 90%）</span></div>
+          <table>
+            <thead><tr><th>结算单号</th><th>订单</th><th>平台佣金</th><th>主厨收入</th><th>货款</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="settleBody"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="p-head">提现审核</div>
+          <table>
+            <thead><tr><th>单号</th><th>主体</th><th>金额</th><th>申请时间</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">W202609160012</td><td>沈师傅（个人）</td><td class="mono">¥2,000.00</td><td>09-16 08:12</td><td id="wd-1"><span class="badge gld">待审核</span></td><td><button class="btn p sm" onclick="passWithdraw(1)">通过打款</button> <button class="btn d sm" onclick="toast('已驳回并通知厨师（演示）')">驳回</button></td></tr>
+              <tr><td class="mono">W202609160011</td><td>铜川路水产（企业）</td><td class="mono">¥8,640.00</td><td>09-15 20:40</td><td><span class="badge hot">已打款</span></td><td><span class="badge">—</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 内容管理 ═══ -->
+      <section class="view" id="v-content">
+        <div class="panel">
+          <div class="p-head">轮播图配置 <span class="hint">首页 home_top · 上海站</span></div>
+          <table>
+            <thead><tr><th>标题</th><th>投放位</th><th>投放窗口</th><th>状态</th><th>启停</th></tr></thead>
+            <tbody>
+              <tr><td>私宴管家 · 上门主理</td><td>首页顶部</td><td>长期</td><td id="bn-1-t"><span class="badge hot">启用中</span></td><td><button class="switch on" id="bn-1" role="switch" aria-checked="true" aria-label="轮播启用" onclick="toggleBanner(1)"></button></td></tr>
+              <tr><td>秋季蟹宴 · 时令推荐</td><td>首页顶部</td><td>09-20 ~ 10-20</td><td id="bn-2-t"><span class="badge hot">启用中</span></td><td><button class="switch on" id="bn-2" role="switch" aria-checked="true" aria-label="轮播启用" onclick="toggleBanner(2)"></button></td></tr>
+              <tr><td>新客立减 30 元</td><td>首页顶部</td><td>长期</td><td id="bn-3-t"><span class="badge">已停用</span></td><td><button class="switch" id="bn-3" role="switch" aria-checked="false" aria-label="轮播启用" onclick="toggleBanner(3)"></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="p-head">师傅秀审核 <span class="hint">机审通过 → 人工复核</span></div>
+          <table>
+            <thead><tr><th>主厨</th><th>标题</th><th>形式</th><th>机审</th><th>操作</th></tr></thead>
+            <tbody id="showBody"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="p-head">菜品 / 菜单审核 <span class="hint">价格与食材清单变更需审核后生效</span></div>
+          <table>
+            <thead><tr><th>主厨</th><th>菜品 / 变更</th><th>内容</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="dishBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 角色权限 ═══ -->
+      <section class="view" id="v-perms">
+        <div class="panel">
+          <div class="p-head">角色权限矩阵 <span class="hint">role + permission + role_permission · 保存后写入 audit_log</span></div>
+          <div class="perm-grid" id="permGrid">
+            <div class="cell head">权限</div><div class="cell head">运营</div><div class="cell head">客服</div><div class="cell head">财务</div><div class="cell head">超级管理员</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn p" onclick="toast('权限已保存 · 操作已写入 audit_log')">保存权限配置</button></div>
+      </section>
+      <!-- ═══ 售后工单 ═══ -->
+      <section class="view" id="v-after">
+        <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+          <div class="m"><b>3</b><span>待处理工单</span></div>
+          <div class="m"><b>46</b><span>本月已解决</span></div>
+          <div class="m"><b>3.2h</b><span>平均首响（SLA 24h）</span></div>
+        </div>
+        <div class="panel">
+          <div class="p-head">售后与投诉工单 <span class="hint">责任判定 → 退款/驳回 → 双端通知</span></div>
+          <table>
+            <thead><tr><th>工单号</th><th>用户 / 订单</th><th>类型</th><th>SLA</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="afterBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 供应链管理 ═══ -->
+      <section class="view" id="v-supply">
+        <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+          <div class="m"><b>52</b><span>今日备货单</span></div>
+          <div class="m"><b>3</b><span>分拣中</span></div>
+          <div class="m"><b>97.8%</b><span>备货准时率</span></div>
+        </div>
+        <div class="panel">
+          <div class="p-head">供应商 <span class="hint">江浙沪 · 3 家主力 + 5 家备用</span></div>
+          <table>
+            <thead><tr><th>供应商</th><th>类目</th><th>结算周期</th><th>近 30 天采购额</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td>江桥蔬菜基地</td><td>蔬菜 / 菌菇</td><td>月结</td><td class="mono">¥86,400</td><td><span class="badge hot">合作中</span></td></tr>
+              <tr><td>铜川路水产批发</td><td>水产 / 肉禽</td><td>月结</td><td class="mono">¥128,900</td><td><span class="badge hot">合作中</span></td></tr>
+              <tr><td>太太乐调味品</td><td>调味 / 粮油</td><td>月结</td><td class="mono">¥12,300</td><td><span class="badge hot">合作中</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="p-head">采购单 <span class="hint">状态由供应链端回写</span></div>
+          <table>
+            <thead><tr><th>采购单号</th><th>供应商</th><th>需求日期</th><th>金额</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">P20260916SH0001</td><td>江桥蔬菜基地</td><td>09-19</td><td class="mono">¥1,860</td><td><span class="badge hot">已入库</span></td></tr>
+              <tr><td class="mono">P20260916SH0002</td><td>铜川路水产批发</td><td>09-19</td><td class="mono">¥4,320</td><td><span class="badge gld">询价中</span></td></tr>
+              <tr><td class="mono">P20260915SH0009</td><td>太太乐调味品</td><td>09-18</td><td class="mono">¥980</td><td><span class="badge hot">已对账</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 操作日志 ═══ -->
+      <section class="view" id="v-logs">
+        <div class="panel">
+          <div class="p-head">管理端操作日志 <span class="hint">audit_log · 保留 365 天</span></div>
+          <table>
+            <thead><tr><th>时间</th><th>操作人</th><th>动作</th><th>对象</th><th>IP</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">09-16 14:22</td><td>运营小顾</td><td class="mono">chef.audit.pass</td><td>周师傅（入驻审核通过）</td><td class="mono">10.8.**.**</td></tr>
+              <tr><td class="mono">09-16 13:05</td><td>财务小陈</td><td class="mono">withdraw.approve</td><td>W202609160012</td><td class="mono">10.8.**.**</td></tr>
+              <tr><td class="mono">09-16 11:47</td><td>运营小顾</td><td class="mono">order.reassign</td><td>O202609160027 → 沈师傅</td><td class="mono">10.8.**.**</td></tr>
+              <tr><td class="mono">09-16 10:31</td><td>运营小顾</td><td class="mono">banner.update</td><td>秋季蟹宴 · 启用</td><td class="mono">10.8.**.**</td></tr>
+              <tr><td class="mono">09-15 18:12</td><td>超管老周</td><td class="mono">role.perm.update</td><td>财务角色 + 报表导出</td><td class="mono">10.8.**.**</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ 消息模板 ═══ -->
+      <section class="view" id="v-notify">
+        <div class="panel">
+          <div class="p-head">订阅消息模板 <span class="hint">微信订阅消息 · 用户需订阅后下发</span></div>
+          <table>
+            <thead><tr><th>模板</th><th>触发场景</th><th>接收端</th><th>状态</th><th>启停</th></tr></thead>
+            <tbody>
+              <tr><td>订单接单提醒</td><td>主厨接单 / 改派</td><td>用户端</td><td id="nt-1"><span class="badge hot">启用</span></td><td><button class="switch on" onclick="toggleTpl(1)" aria-label="启停"></button></td></tr>
+              <tr><td>履约状态通知</td><td>备货 / 待上门 / 完成</td><td>用户端</td><td id="nt-2"><span class="badge hot">启用</span></td><td><button class="switch on" onclick="toggleTpl(2)" aria-label="启停"></button></td></tr>
+              <tr><td>派单提醒</td><td>平台派单 / 需求匹配</td><td>厨师端</td><td id="nt-3"><span class="badge hot">启用</span></td><td><button class="switch on" onclick="toggleTpl(3)" aria-label="启停"></button></td></tr>
+              <tr><td>结算到账通知</td><td>分账入账 / 提现</td><td>厨师端</td><td id="nt-4"><span class="badge hot">启用</span></td><td><button class="switch on" onclick="toggleTpl(4)" aria-label="启停"></button></td></tr>
+              <tr><td>售后进展通知</td><td>工单状态变化</td><td>用户端</td><td id="nt-5"><span class="badge">停用</span></td><td><button class="switch" onclick="toggleTpl(5)" aria-label="启停"></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- 改派弹层 -->
+<div class="overlay" id="reassignOverlay" role="dialog" aria-label="订单改派">
+  <div class="modal">
+    <h3>订单改派</h3>
+    <p id="reassignInfo">为超时未接订单重新指派同菜系主厨：</p>
+    <div class="chips" id="reassignChips">
+      <button class="chip on">沈师傅 · 本帮菜 · 周六有空</button>
+      <button class="chip">周师傅 · 本帮菜 · 周六有空</button>
+      <button class="chip">郑师傅 · 本帮菜 · 需确认档期</button>
+    </div>
+    <div class="row" style="margin-top:18px">
+      <button class="btn d" onclick="closeOverlay('reassignOverlay')">取消</button>
+      <button class="btn p" onclick="confirmReassign()">确认改派</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="orderModal" role="dialog" aria-label="订单详情">
+  <div class="modal"><div id="orderModalBody"></div></div>
+</div>
+
+<div class="overlay" id="userModal" role="dialog" aria-label="用户详情">
+  <div class="modal"><div id="userModalBody"></div></div>
+</div>
+
+<div class="overlay" id="auditModal" role="dialog" aria-label="审核详情">
+  <div class="modal"><div id="auditModalBody"></div></div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  let toastTimer;
+  window.toast = function(msg) {
+    const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 2400);
+  };
+  window.closeOverlay = function(id) { document.getElementById(id).classList.remove('on'); };
+
+  /* 导航 */
+  const crumbMap = { dash:'驾驶舱', users:'用户管理', chefs:'厨师管理', orders:'订单管理', after:'售后工单', settle:'结算管理', content:'内容管理', supply:'供应链管理', perms:'角色权限', logs:'操作日志', notify:'消息模板' };
+  $('#nav').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    $$('#nav button').forEach(x => x.classList.toggle('on', x === b));
+    $$('.view').forEach(v => v.classList.remove('on'));
+    document.getElementById('v-' + b.dataset.v).classList.add('on');
+    $('#crumb').textContent = crumbMap[b.dataset.v];
+  });
+
+  /* 厨师审核 */
+  let auditPending = 5;
+  const audits = [
+    { id:1, n:'周师傅', c:'本帮菜', cert:'hot', ct:'证件已核验', v:'已提交视频', m:'全职签约' },
+    { id:2, n:'吴师傅', c:'淮扬菜', cert:'warn', ct:'待补健康证', v:'未提交', m:'众包' },
+    { id:3, n:'郑师傅', c:'粤菜', cert:'hot', ct:'证件已核验', v:'已提交视频', m:'全职签约' },
+    { id:4, n:'冯阿姨', c:'家常菜', cert:'hot', ct:'证件已核验', v:'已提交视频', m:'众包' }
+  ];
+  function renderAudit() {
+    $('#auditBody').innerHTML = audits.map(a => `
+      <tr id="ar-${a.id}">
+        <td>${a.n}</td><td>${a.c}</td>
+        <td><span class="badge ${a.cert}">${a.ct}</span></td>
+        <td>${a.v}</td><td>${a.m}</td>
+        <td id="aa-${a.id}"><button class="btn s sm" onclick="openAudit(${a.id})">详情</button> <button class="btn p sm" onclick="passAudit(${a.id})">通过</button> <button class="btn d sm" onclick="rejectAudit(${a.id})">驳回</button></td>
+      </tr>`).join('');
+  }
+  window.passAudit = function(id) {
+    document.getElementById('aa-' + id).innerHTML = '<span class="badge hot">已通过 · 待签约</span>';
+    auditPending--; updateAudit();
+    toast('审核通过：已向申请人发送签约链接（电子合同）');
+  };
+  window.rejectAudit = function(id) {
+    document.getElementById('aa-' + id).innerHTML = '<span class="badge dng">已驳回</span>';
+    auditPending--; updateAudit();
+    toast('已驳回并附驳回理由，申请人可补充材料后重新提交');
+  };
+  function updateAudit() {
+    $('#cAudit').textContent = auditPending;
+    $('#mAudit').textContent = auditPending;
+  }
+
+  /* 订单 */
+  let orderFilter = 'all';
+  const orders = [
+    { id:32, no:'O202609160032', who:'王先生 / 沈师傅', time:'09-19 11:00', amt:'¥1,184', f:'doing', st:'gld', stt:'备货中', act:'none' },
+    { id:31, no:'O202609160031', who:'李女士 / 张师傅', time:'09-18 18:00', amt:'¥298', f:'done', st:'hot', stt:'已完成', act:'none' },
+    { id:30, no:'O202609160030', who:'刘先生 / —', time:'09-19 12:00', amt:'¥688', f:'wait', st:'warn', stt:'待接单 · 超时', act:'reassign' },
+    { id:29, no:'O202609160029', who:'陈女士 / 王师傅', time:'09-17 18:00', amt:'¥386', f:'cancel', st:'', stt:'已取消', act:'none' },
+    { id:28, no:'O202609160028', who:'赵先生 / 李阿姨', time:'09-18 18:00', amt:'¥298', f:'done', st:'hot', stt:'已完成', act:'none' },
+    { id:27, no:'O202609160027', who:'孙女士 / 周师傅', time:'09-19 12:00', amt:'¥458', f:'doing', st:'gld', stt:'备货中', act:'none' }
+  ];
+  function renderOrders() {
+    const list = orders.filter(o => orderFilter === 'all' || o.f === orderFilter);
+    $('#orderHint').textContent = `共 ${list.length} 条`;
+    $('#orderBody').innerHTML = list.map(o => `
+      <tr>
+        <td class="mono">${o.no}</td><td>${o.who}</td><td>${o.time}</td><td class="mono">${o.amt}</td>
+        <td><span class="badge ${o.st}">${o.stt}</span></td>
+        <td id="oa-${o.id}">${o.act === 'reassign' ? '<button class="btn g sm" onclick="openReassign(' + o.id + ')">一键改派</button> <button class="btn s sm" onclick="openOrder(' + o.id + ')">详情</button>' : '<button class="btn s sm" onclick="openOrder(' + o.id + ')">详情</button>'}</td>
+      </tr>`).join('');
+  }
+  $('#orderFilter').addEventListener('click', (e) => {
+    const b = e.target.closest('button.chip'); if (!b) return;
+    orderFilter = b.dataset.f;
+    $$('#orderFilter .chip').forEach(x => x.classList.toggle('on', x === b));
+    renderOrders();
+  });
+  let reassignTarget = null;
+  window.openReassign = function(id) {
+    reassignTarget = id;
+    const o = orders.find(x => x.id === id);
+    $('#reassignInfo').textContent = '为超时未接订单 ' + o.no + '（' + o.who.split(' /')[0] + '）重新指派同菜系主厨：';
+    $('#reassignOverlay').classList.add('on');
+  };
+  $('#reassignChips').addEventListener('click', (e) => {
+    const c = e.target.closest('button.chip'); if (!c) return;
+    $$('#reassignChips .chip').forEach(x => x.classList.remove('on'));
+    c.classList.add('on');
+  });
+  window.confirmReassign = function() {
+    const chef = $('#reassignChips .chip.on').textContent.split(' ·')[0];
+    const o = orders.find(x => x.id === reassignTarget);
+    o.who = o.who.split(' /')[0] + ' / ' + chef;
+    o.st = 'gld'; o.stt = '已改派 · 备货中'; o.act = 'none';
+    document.getElementById('oa-' + o.id).innerHTML = '<span class="badge">已改派</span>';
+    renderOrders();
+    closeOverlay('reassignOverlay');
+    toast('已改派至 ' + chef + '，订阅消息已通知用户与主厨');
+  };
+
+  /* 结算 */
+  let pendCount = 3;
+  const settles = [
+    { id:32, no:'S202609190032', o:'O202609160032', p:'¥142.08', c:'¥1,041.92', s:'¥—', st:'gld', stt:'待分账', act:true },
+    { id:31, no:'S202609190031', o:'O202609160031', p:'¥35.76', c:'¥262.24', s:'¥—', st:'gld', stt:'待分账', act:true },
+    { id:30, no:'S202609190030', o:'O202609160030', p:'¥—', c:'¥—', s:'¥—', st:'', stt:'未生成', act:false },
+    { id:29, no:'S202609180029', o:'O202609150029', p:'¥46.32', c:'¥339.68', s:'¥—', st:'hot', stt:'已分账', act:false },
+    { id:28, no:'S202609180028', o:'O202609150028', p:'¥—', c:'¥—', s:'¥—', st:'dng', stt:'分账失败', act:true }
+  ];
+  function renderSettle() {
+    $('#settleBody').innerHTML = settles.map(s => `
+      <tr>
+        <td class="mono">${s.no}</td><td class="mono">${s.o}</td><td class="mono">${s.p}</td><td class="mono">${s.c}</td><td class="mono">${s.s}</td>
+        <td><span class="badge ${s.st}">${s.stt}</span></td>
+        <td id="sa-${s.id}">${s.act ? '<button class="btn p sm" onclick="execSplit(' + s.id + ')">执行分账</button>' : '<span class="badge">—</span>'}</td>
+      </tr>`).join('');
+  }
+  window.execSplit = function(id) {
+    const s = settles.find(x => x.id === id);
+    if (s.stt === '分账失败') {
+      s.st = 'gld'; s.stt = '重试中';
+      document.getElementById('sa-' + id).innerHTML = '<span class="badge gld">重试中</span>';
+      toast('失败分账已重新入队（第 2 次重试，指数退避）');
+      return;
+    }
+    s.st = 'hot'; s.stt = '已分账'; s.act = false;
+    document.getElementById('sa-' + id).innerHTML = '<span class="badge hot">已分账</span>';
+    pendCount--; $('#mPend').textContent = pendCount;
+    toast('分账成功：已写入 wallet_txn，厨师 T+1 可提现');
+  };
+  window.passWithdraw = function(id) {
+    document.getElementById('wd-' + id).innerHTML = '<span class="badge hot">已打款</span>';
+    toast('提现审核通过 · 商家转账已发起至微信零钱');
+  };
+
+  /* 内容 */
+  window.toggleBanner = function(id) {
+    const sw = document.getElementById('bn-' + id);
+    const on = sw.classList.toggle('on');
+    sw.setAttribute('aria-checked', on);
+    document.getElementById('bn-' + id + '-t').innerHTML = on ? '<span class="badge hot">启用中</span>' : '<span class="badge">已停用</span>';
+    toast(on ? '轮播已启用，App 端即时生效' : '轮播已停用');
+  };
+  let shows = [
+    { id:1, chef:'沈师傅', t:'3 步做出本帮红烧肉', m:'视频 02:14', mach:'机审通过' },
+    { id:2, chef:'王师傅', t:'家宴排菜显高级', m:'图文 6 图', mach:'机审通过' },
+    { id:3, chef:'张师傅', t:'大闸蟹的五种做法', m:'视频 03:40', mach:'机审通过' }
+  ];
+  function renderShows() {
+    $('#showBody').innerHTML = shows.map(s => `
+      <tr id="sh-${s.id}">
+        <td>${s.chef}</td><td>${s.t}</td><td>${s.m}</td><td><span class="badge hot">${s.mach}</span></td>
+        <td><button class="btn p sm" onclick="passShow(${s.id})">通过上线</button> <button class="btn d sm" onclick="rejectShow(${s.id})">驳回</button></td>
+      </tr>`).join('');
+  }
+  window.passShow = function(id) {
+    document.getElementById('sh-' + id).querySelector('td:last-child').innerHTML = '<span class="badge hot">已上线</span>';
+    toast('师傅秀已上线，粉丝可见');
+  };
+  window.rejectShow = function(id) {
+    document.getElementById('sh-' + id).querySelector('td:last-child').innerHTML = '<span class="badge dng">已驳回</span>';
+    toast('已驳回并通知主厨补充说明');
+  };
+
+  /* 用户封禁 */
+  window.toggleUser = function(id) {
+    const cell = document.getElementById('ust-' + id);
+    const banned = cell.querySelector('.badge').classList.contains('dng');
+    cell.innerHTML = banned ? '<span class="badge hot">正常</span>' : '<span class="badge dng">已封禁</span>';
+    toast(banned ? '账号已解封' : '账号已封禁，订阅消息已通知');
+  };
+
+  /* 权限矩阵 */
+  const perms = [
+    { name:'订单管理（查看/改派）', ops:[1,1,0,1] },
+    { name:'结算与提现审核', ops:[0,0,1,1] },
+    { name:'厨师入驻审核', ops:[1,0,0,1] },
+    { name:'内容管理（轮播/师傅秀）', ops:[1,1,0,1] },
+    { name:'数据报表导出', ops:[1,0,1,1] },
+    { name:'角色与权限配置', ops:[0,0,0,1] }
+  ];
+  function renderPerms() {
+    const grid = $('#permGrid');
+    grid.innerHTML = '<div class="cell head">权限</div><div class="cell head">运营</div><div class="cell head">客服</div><div class="cell head">财务</div><div class="cell head">超级管理员</div>';
+    perms.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:contents';
+      row.innerHTML = `<div class="cell">${p.name}</div>` + p.ops.map((on, j) => `
+        <div class="cell"><input type="checkbox" ${on ? 'checked' : ''} data-p="${i}" data-j="${j}" aria-label="${p.name}"></div>`).join('');
+      grid.appendChild(row);
+    });
+    grid.addEventListener('change', (e) => {
+      const inp = e.target.closest('input'); if (!inp) return;
+      perms[+inp.dataset.p].ops[+inp.dataset.j] = inp.checked ? 1 : 0;
+    });
+  }
+
+  window.toggleTpl = function(id) {
+    const cell = document.getElementById('nt-' + id);
+    const badge = cell.querySelector('.badge');
+    const on = badge.classList.contains('hot');
+    badge.outerHTML = on ? '<span class="badge">停用</span>' : '<span class="badge hot">启用</span>';
+    toast(on ? '模板已停用，notify_record 不再下发' : '模板已启用');
+  };
+
+  /* 售后工单 */
+  const afterCases = [
+    { id:1, no:'CT20260915SH0006', who:'王女士 · O202609120018', type:'卫生问题', sla:'剩 6h', st:'gld', stt:'待处理', act:true },
+    { id:2, no:'CT20260914SH0004', who:'刘先生 · O202609110012', type:'主厨迟到', sla:'已联系主厨', st:'gld', stt:'处理中', act:true },
+    { id:3, no:'CT20260910SH0002', who:'陈女士 · O202609100008', type:'发票咨询', sla:'—', st:'hot', stt:'已解决', act:false }
+  ];
+  function renderAfter() {
+    $('#afterBody').innerHTML = afterCases.map(c => `
+      <tr id="af-${c.id}">
+        <td class="mono">${c.no}</td><td>${c.who}</td><td>${c.type}</td><td>${c.sla}</td>
+        <td><span class="badge ${c.st}">${c.stt}</span></td>
+        <td>${c.act ? '<button class="btn p sm" onclick="refundCase(' + c.id + ')">判定退款 ¥86</button> <button class="btn d sm" onclick="rejectCase(' + c.id + ')">驳回</button>' : '<span class="badge">—</span>'}</td>
+      </tr>`).join('');
+  }
+  window.refundCase = function(id) {
+    document.getElementById('af-' + id).querySelector('td:nth-child(5)').innerHTML = '<span class="badge hot">已退款</span>';
+    document.getElementById('af-' + id).querySelector('td:last-child').innerHTML = '<span class="badge">已办结</span>';
+    toast('退款已执行：原路退回 + 分账回退（如已分账），双端已通知');
+  };
+  window.rejectCase = function(id) {
+    document.getElementById('af-' + id).querySelector('td:nth-child(5)').innerHTML = '<span class="badge dng">已驳回</span>';
+    document.getElementById('af-' + id).querySelector('td:last-child').innerHTML = '<span class="badge">已办结</span>';
+    toast('已驳回并附判定依据，用户可补充凭证后申诉');
+  };
+
+  /* 菜品审核 */
+  const dishAudits = [
+    { id:1, chef:'沈师傅', name:'秋季蟹粉豆腐 · 新增', info:'¥138/份 · 食材清单 5 项', st:'gld', stt:'待审核', act:true },
+    { id:2, chef:'沈师傅', name:'响油鳝丝 · 调价', info:'¥158 → ¥168', st:'gld', stt:'待审核', act:true },
+    { id:3, chef:'陈师傅', name:'酒酿圆子 · 新增', info:'¥28/份 · 含代采食材 2 项', st:'gld', stt:'待审核', act:true }
+  ];
+  function renderDishes() {
+    $('#dishBody').innerHTML = dishAudits.map(d => `
+      <tr id="da-${d.id}">
+        <td>${d.chef}</td><td>${d.name}</td><td class="mono">${d.info}</td>
+        <td><span class="badge ${d.st}">${d.stt}</span></td>
+        <td>${d.act ? '<button class="btn p sm" onclick="passDish(' + d.id + ')">通过</button> <button class="btn d sm" onclick="rejectDish(' + d.id + ')">驳回</button>' : '<span class="badge">—</span>'}</td>
+      </tr>`).join('');
+  }
+  window.passDish = function(id) {
+    const d = dishAudits.find(x => x.id === id);
+    document.getElementById('da-' + id).querySelector('td:nth-child(4)').innerHTML = '<span class="badge hot">已通过 · 上架</span>';
+    document.getElementById('da-' + id).querySelector('td:last-child').innerHTML = '<span class="badge">—</span>';
+    toast('审核通过：' + d.name + '，已同步厨师端与用户端');
+  };
+  window.rejectDish = function(id) {
+    document.getElementById('da-' + id).querySelector('td:nth-child(4)').innerHTML = '<span class="badge dng">已驳回</span>';
+    document.getElementById('da-' + id).querySelector('td:last-child').innerHTML = '<span class="badge">—</span>';
+    toast('已驳回并附理由，主厨可修改后重提');
+  };
+
+  /* 订单详情弹窗 */
+  window.openOrder = function(id) {
+    const o = orders.find(x => x.id === id);
+    if (!o) return;
+    $('#orderModalBody').innerHTML = `
+      <h3>订单详情 ${o.no}</h3>
+      <p>${o.who} · 服务时间 ${o.time} · 金额 ${o.amt}</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;font-size:12.5px">
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>状态</span><b style="color:var(--ink)">${o.stt}</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>资金</span><b style="color:var(--ink)">微信支付 · 平台商户号托管（待分账）</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>分账计划</span><b style="color:var(--ink)">完成 T+1：佣金 / 主厨 / 供应链</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>状态履历</span><b style="color:var(--ink)">已支付 → 已接单 → 备货中</b></div>
+      </div>
+      <div class="row"><button class="btn d" onclick="closeOverlay('orderModal')">关闭</button></div>`;
+    $('#orderModal').classList.add('on');
+  };
+  window.toggleChef = function(btn) {
+    const row = btn.closest('tr');
+    const badge = row.querySelector('td:nth-child(7) .badge');
+    const stopped = badge.classList.contains('dng');
+    if (stopped) { badge.className = 'badge hot'; badge.textContent = '可接单'; btn.textContent = '停单'; toast('已恢复接单，重新进入派单池'); }
+    else { badge.className = 'badge dng'; badge.textContent = '已停单'; btn.textContent = '恢复'; toast('已停单：移出派单池，进行中订单不受影响'); }
+  };
+  const userDetail = {
+    1: { name:'王先生', phone:'138****6621', city:'上海', member:'家庭会员（至 2026-12-31）', orders:'18 单 · GMV ¥6,240', addr:'2 个地址 · 默认：衡山路 890 弄', note:'正常' },
+    2: { name:'李女士', phone:'139****3387', city:'上海', member:'—', orders:'6 单 · GMV ¥1,860', addr:'1 个地址', note:'正常' },
+    3: { name:'赵某', phone:'150****2210', city:'上海', member:'—', orders:'31 单 · GMV ¥9,120', addr:'3 个地址', note:'风控封禁：高频取消 + 异常设备' }
+  };
+  window.openUser = function(id) {
+    const u = userDetail[id]; if (!u) return;
+    $('#userModalBody').innerHTML = `
+      <h3>用户详情 · ${u.name}</h3>
+      <p>${u.phone} · ${u.city} · ${u.member}</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;font-size:12.5px">
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>历史订单</span><b style="color:var(--ink)">${u.orders}</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>服务地址</span><b style="color:var(--ink)">${u.addr}</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>账号备注</span><b style="color:var(--ink)">${u.note}</b></div>
+      </div>
+      <div class="row"><button class="btn d" onclick="closeOverlay('userModal')">关闭</button></div>`;
+    $('#userModal').classList.add('on');
+  };
+  window.openAudit = function(id) {
+    const a = audits.find(x => x.id === id); if (!a) return;
+    $('#auditModalBody').innerHTML = `
+      <h3>入驻审核详情 · ${a.n}</h3>
+      <p>${a.c} · ${a.m}</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;font-size:12.5px">
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>身份证实名</span><b style="color:var(--ink)">已核验通过</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>健康证</span><b style="color:var(--ink)">${a.ct.indexOf('待补') > -1 ? '待补充（阻断项）' : '有效 · 2027-03 到期'}</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>技能证书</span><b style="color:var(--ink)">已核验（高级中式烹调师）</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>试菜视频</span><b style="color:var(--ink)">${a.v}</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>评审进度</span><b style="color:var(--ink)">1/2 名评审完成</b></div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>电子合同</span><b style="color:var(--ink)">待签署（通过后自动发起）</b></div>
+      </div>
+      <div class="row"><button class="btn d" onclick="closeOverlay('auditModal')">关闭</button></div>`;
+    $('#auditModal').classList.add('on');
+  };
+
+  renderAudit();
+  renderOrders();
+  renderSettle();
+  renderShows();
+  renderPerms();
+  renderAfter();
+  renderDishes();
+})();
+</script>
+</body>
+</html>
